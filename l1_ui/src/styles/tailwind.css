@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Primary Colors */
+    --color-primary: #1E3A8A; /* blue-900 */
+    --color-primary-foreground: #FFFFFF; /* white */
+    
+    /* Secondary Colors */
+    --color-secondary: #64748B; /* slate-500 */
+    --color-secondary-foreground: #FFFFFF; /* white */
+    
+    /* Accent Colors */
+    --color-accent: #0EA5E9; /* sky-500 */
+    --color-accent-foreground: #FFFFFF; /* white */
+    
+    /* Background Colors */
+    --color-background: #F8FAFC; /* slate-50 */
+    --color-foreground: #0F172A; /* slate-900 */
+    
+    /* Surface Colors */
+    --color-card: #FFFFFF; /* white */
+    --color-card-foreground: #0F172A; /* slate-900 */
+    
+    --color-popover: #FFFFFF; /* white */
+    --color-popover-foreground: #0F172A; /* slate-900 */
+    
+    /* Muted Colors */
+    --color-muted: #F1F5F9; /* slate-100 */
+    --color-muted-foreground: #475569; /* slate-600 */
+    
+    /* Border & Input */
+    --color-border: #E2E8F0; /* slate-200 */
+    --color-input: #E2E8F0; /* slate-200 */
+    --color-ring: #0EA5E9; /* sky-500 */
+    
+    /* Status Colors */
+    --color-success: #059669; /* emerald-600 */
+    --color-success-foreground: #FFFFFF; /* white */
+    
+    --color-warning: #D97706; /* amber-600 */
+    --color-warning-foreground: #FFFFFF; /* white */
+    
+    --color-error: #DC2626; /* red-600 */
+    --color-error-foreground: #FFFFFF; /* white */
+    
+    --color-destructive: #DC2626; /* red-600 */
+    --color-destructive-foreground: #FFFFFF; /* white */
+    
+    /* Typography */
+    --font-heading: 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-caption: 'Inter', sans-serif;
+    --font-data: 'JetBrains Mono', monospace;
+    
+    /* Spacing & Layout */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    
+    /* Shadows */
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-modal: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark {
+    --color-background: #0F172A; /* slate-900 */
+    --color-foreground: #F8FAFC; /* slate-50 */
+    
+    --color-card: #1E293B; /* slate-800 */
+    --color-card-foreground: #F8FAFC; /* slate-50 */
+    
+    --color-popover: #1E293B; /* slate-800 */
+    --color-popover-foreground: #F8FAFC; /* slate-50 */
+    
+    --color-muted: #334155; /* slate-700 */
+    --color-muted-foreground: #94A3B8; /* slate-400 */
+    
+    --color-border: #334155; /* slate-700 */
+    --color-input: #334155; /* slate-700 */
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+@layer components {
+.sidebar-header  {
+    @apply flex items-center justify-center h-16 px-4 border-b border-border transition-all duration-200;
+  }
+
+  .sidebar-header.collapsed {
+    @apply px-2;
+  }
+.sidebar-logo  {
+    @apply flex items-center justify-center w-12 h-12 rounded-lg text-primary transition-all duration-200;
+  }
+
+  .sidebar-header.collapsed .sidebar-logo {
+    @apply w-10 h-10;
+  }
+
+  .sidebar-brand-text {
+    @apply ml-3 text-lg font-semibold text-foreground transition-all duration-200;
+  }
+
+  .sidebar-header.collapsed .sidebar-brand-text {
+    @apply opacity-0 w-0 ml-0;
+  }
+
+  .scanner-status-indicator {
+    @apply flex items-center gap-2 px-3 py-2 rounded-md bg-muted text-sm font-medium transition-colors duration-200;
+  }
+.scanner-status-indicator.connected  {
+    @apply text-success;
+  }
+.scanner-status-indicator.disconnected  {
+    @apply text-error;
+  }
+.scanner-status-indicator.scanning  {
+    @apply text-warning;
+  }
+
+  .notification-badge {
+    @apply absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-semibold text-white bg-error rounded-full;
+  }
+.quick-action-button  {
+    @apply flex items-center gap-2 px-4 py-2 rounded-md bg-accent text-accent-foreground font-medium transition-all duration-200 active:scale-95;
+  }
+
+  .data-text {
+    font-family: var(--font-data);
+    @apply tracking-tight;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animation-micro-status {
+    @apply transition-colors duration-200 ease-out;
+  }
+
+  .card-elevated {
+    @apply rounded-md shadow-card hover:shadow-modal transition-shadow duration-200;
+  }
+
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+}
