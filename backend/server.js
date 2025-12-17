@@ -1,39 +1,35 @@
-require('dotenv').config()
-const express = require('express')
-const mongoose = require('mongoose')
-const workoutRoutes = require('./routes/workouts')
-const userRoutes = require('./routes/users');
-const cors = require("cors");
+import { express }  from 'express'
+import {cors } from 'cors'
+import { connectToDB } from './config/mongoDB.js'
+import 'dotenv/config'
 
-// express app
+import workoutRoutes from './routes/workoutRoutes.js'
+import userRoutes from './routes/userRoutes.js'
+
+// express app config
 const app = express()
+const PORT = process.env.PORT || 3000; // fallback port
 
-// middleware
+// DB connection
+connectToDB();
+
+// middlewares
 app.use(express.json())
-
 app.use(cors({
     origin: "https://workout-frontend-h22n.onrender.com", // your deployed frontend URL
     credentials: true
 }));
 
-
-app.use((req, res, next) => {
-  console.log(req.path, req.method)
-  next()
+// basic route to test server
+app.get('/', (req, res) => { 
+    res.send('API is working .. ');
 })
 
-// routes
+// api routes
 app.use('/api/workouts', workoutRoutes)
-app.use('/api/user',userRoutes);
+app.use('/api/user', userRoutes);
 
-// connect to db
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    // listen for requests
-    app.listen(process.env.PORT, () => {
-      console.log('connected to db & listening on port', process.env.PORT)
-    })
-  })
-  .catch((error) => {
-    console.log(error)
-  })
+// start server
+app.listen( PORT, ()=>{ 
+    console.log(`Server is running on port ${PORT}`);
+})
