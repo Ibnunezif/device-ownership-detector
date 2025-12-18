@@ -352,4 +352,4 @@ audit_trail
 ├── user_agent
 ├── change_reason
 ├── is_system_generated
-└── created_at (Immutable)
+└── created_at (Immutable)      lets analyse
