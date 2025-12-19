@@ -3,23 +3,44 @@ import Button from '../../../components/ui/Button';
 import { Checkbox } from '../../../components/ui/Checkbox';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
+import { registerDevice } from '../../../api/deviceRegistationApi';
 
 const ReviewSubmitForm = ({ formData, onBack, onSubmit }) => {
   const [agreed, setAgreed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
-    e?.preventDefault();
-    
-    if (!agreed) {
-      alert('Please agree to the terms and conditions');
-      return;
-    }
+  e?.preventDefault();
 
-    setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    onSubmit();
-  };
+  if (!agreed) {
+    alert('Please agree to the terms and conditions');
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  try {
+    // Prepare FormData (for file uploads)
+    const dataToSend = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        dataToSend.append(key, value);
+      }
+    });
+
+    // Call backend API
+    const response = await registerDevice(dataToSend);
+
+    // Pass backend response to parent
+    onSubmit(response); 
+  } catch (error) {
+    console.error('Registration failed:', error);
+    alert('Failed to submit registration. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   const InfoRow = ({ label, value }) => (
     <div className="flex justify-between py-3 border-b border-border last:border-0">

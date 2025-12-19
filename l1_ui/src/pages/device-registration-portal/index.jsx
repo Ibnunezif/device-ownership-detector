@@ -84,12 +84,36 @@ const DeviceRegistrationPortal = () => {
     }
   };
 
-  const handleSubmit = () => {
-    const newRegistrationId = `REG${new Date()?.getFullYear()}${String(Math.floor(Math.random() * 10000))?.padStart(4, '0')}`;
-    setRegistrationId(newRegistrationId);
-    setShowSuccessModal(true);
-    localStorage.removeItem('deviceRegistrationDraft');
-  };
+const handleSubmit = (backendResponse) => {
+  // Assume backendResponse contains a registrationId
+  const regId = backendResponse?.registrationId || `REG${new Date().getFullYear()}${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`;
+
+  setRegistrationId(regId);
+  setShowSuccessModal(true);
+  localStorage.removeItem('deviceRegistrationDraft');
+
+  // Reset wizard
+  setCurrentStep(1);
+  setCompletedSteps([]);
+  setFormData({
+    studentId: '',
+    fullName: '',
+    email: '',
+    phone: '',
+    department: '',
+    enrollmentYear: '',
+    deviceType: '',
+    brand: '',
+    model: '',
+    serialNumber: '',
+    purchaseDate: '',
+    color: '',
+    specifications: '',
+    ownerPhoto: null,
+    devicePhoto: null
+  });
+};
+
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
