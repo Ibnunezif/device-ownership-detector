@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Icon from '../../../components/AppIcon';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
+import { Html5Qrcode } from "html5-qrcode";
+
 
 const ScanningPanel = ({ onScanComplete, scannerConnected }) => {
   const [scanMode, setScanMode] = useState('barcode');
@@ -10,6 +12,8 @@ const ScanningPanel = ({ onScanComplete, scannerConnected }) => {
   const [manualSearchQuery, setManualSearchQuery] = useState('');
   const videoRef = useRef(null);
   const inputRef = useRef(null);
+  const qrScannerRef = useRef(null);
+
 
   useEffect(() => {
     if (scanMode === 'barcode' && inputRef?.current) {
@@ -43,28 +47,37 @@ const ScanningPanel = ({ onScanComplete, scannerConnected }) => {
     }
   }, [scanMode]);
 
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices?.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      });
-      if (videoRef?.current) {
-        videoRef.current.srcObject = stream;
-        setCameraActive(true);
-      }
-    } catch (error) {
-      console.error('Camera access denied:', error);
-    }
-  };
+ const startCamera = async () => {
+  try {
+    qrScannerRef.current = new Html5Qrcode("camera-reader");
 
-  const stopCamera = () => {
-    if (videoRef?.current && videoRef?.current?.srcObject) {
-      const tracks = videoRef?.current?.srcObject?.getTracks();
-      tracks?.forEach(track => track?.stop());
-      videoRef.current.srcObject = null;
-      setCameraActive(false);
-    }
-  };
+    await qrScannerRef.current.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      (decodedText) => {
+        onScanComplete({
+          method: "camera",
+          data: decodedText,
+          timestamp: new Date()
+        });
+      }
+    );
+
+    setCameraActive(true);
+  } catch (err) {
+    console.error("Camera error:", err);
+  }
+};
+
+const stopCamera = async () => {
+  if (qrScannerRef.current) {
+    await qrScannerRef.current.stop();
+    qrScannerRef.current.clear();
+    qrScannerRef.current = null;
+  }
+  setCameraActive(false);
+};
+
 
   const handleBarcodeSubmit = (e) => {
     e?.preventDefault();
