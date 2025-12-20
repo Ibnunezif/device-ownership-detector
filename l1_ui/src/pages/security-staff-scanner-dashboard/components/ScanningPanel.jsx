@@ -5,6 +5,8 @@ import Button from '../../../components/ui/Button';
 import { Html5Qrcode } from "html5-qrcode";
 
 
+
+
 const ScanningPanel = ({ onScanComplete, scannerConnected }) => {
   const [scanMode, setScanMode] = useState('barcode');
   const [barcodeInput, setBarcodeInput] = useState('');
