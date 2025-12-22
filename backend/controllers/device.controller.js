@@ -1,7 +1,4 @@
 import Device from "../models/device.model.js";
-import mongoose from "mongoose";
-
-const sampleObjectId = new mongoose.Types.ObjectId();
 
 // POST /api/devices/register
 // body: { device_type_id, brand, model, serial_number, color }
@@ -38,12 +35,10 @@ const registerDevice = async (req, res) => {
       devicePhotoUrl = req.file.path;
     }
 
-    console.log("Device Photo URL:", devicePhotoUrl);
-
     // 4. Create a new device
     const device = await Device.create({
       user_id: req.user._id,
-      device_type_id: sampleObjectId,
+      device_type_id,
       brand,
       model,
       serial_number,
