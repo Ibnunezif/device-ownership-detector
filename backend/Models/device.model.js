@@ -38,7 +38,7 @@ const deviceSchema = new mongoose.Schema(
 
     id_generated_by: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "User", // approved by user id
     },
   },
   { timestamps: true }
