@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const sampleObjectId = new mongoose.Types.ObjectId();
 
-// POST /api/device/register
+// POST /api/devices/register
 // body: { device_type_id, brand, model, serial_number, color }
 const registerDevice = async (req, res) => {
   try {
