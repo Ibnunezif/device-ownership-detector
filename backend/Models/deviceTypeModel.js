@@ -11,7 +11,7 @@ const deviceTypeSchema = new Schema({
     type: String,
   },
   created_by: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'User',
   },
