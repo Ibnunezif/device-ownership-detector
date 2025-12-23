@@ -5,6 +5,7 @@ import "dotenv/config";
 import deviceRouter from "./routes/device.route.js";
 import gateRouter from "./routes/gate.route.js";
 import libraryRouter from "./routes/library.route.js";
+import movementRouter from "./routes/movement.route.js";
 
 // express app config
 const app = express();
@@ -31,6 +32,7 @@ app.get("/", (req, res) => {
 app.use("/api/devices", deviceRouter);
 app.use("/api/gates", gateRouter);
 app.use("/api/libraries", libraryRouter);
+app.use("/api/movements", movementRouter);
 
 // start server
 app.listen(PORT, () => {
