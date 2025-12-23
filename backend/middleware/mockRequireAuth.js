@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const mockRequireAuth = (req, res, next) => {
   req.user = {
     _id: new mongoose.Types.ObjectId(), // sample objectId
-    role: "security_chief",
+    role: "security_chief", // mock role
   };
   next();
 };
