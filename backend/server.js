@@ -1,39 +1,51 @@
-require('dotenv').config()
-const express = require('express')
-const mongoose = require('mongoose')
-const workoutRoutes = require('./routes/workouts')
-const userRoutes = require('./routes/users');
-const cors = require("cors");
+import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+
+import workoutRoutes from './routes/workouts.js';
+import userRoutes from './routes/users.js';
 
 // express app
-const app = express()
+const app = express();
 
 // middleware
-app.use(express.json())
+app.use(express.json());
 
-app.use(cors({
-    origin: "https://workout-frontend-h22n.onrender.com", // your deployed frontend URL
+// allow localhost + deployed frontend
+app.use(
+  cors({
+    origin: [
+      'http://localhost:8080',
+      'http://127.0.0.1:8080',
+      'https://workout-frontend-h22n.onrender.com'
+    ],
     credentials: true
-}));
+  })
+);
 
-
+// request logger
 app.use((req, res, next) => {
-  console.log(req.path, req.method)
-  next()
-})
+  console.log(req.method, req.path);
+  next();
+});
 
 // routes
-app.use('/api/workouts', workoutRoutes)
-app.use('/api/user',userRoutes);
+app.use('/api/workouts', workoutRoutes);
+app.use('/api/user', userRoutes);
 
 // connect to db
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGODB_URI)
   .then(() => {
-    // listen for requests
-    app.listen(process.env.PORT, () => {
-      console.log('connected to db & listening on port', process.env.PORT)
-    })
+    app.listen(process.env.SERVER_PORT || 8080, () => {
+      console.log(
+        'Connected to MongoDB & listening on port',
+        process.env.SERVER_PORT || 8080
+      );
+    });
   })
   .catch((error) => {
-    console.log(error)
-  })
+    console.error(error);
+  });
