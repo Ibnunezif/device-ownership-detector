@@ -3,6 +3,8 @@ import cors from "cors";
 import connectToDB from "./config/mongoDB.js";
 import "dotenv/config";
 import deviceRouter from "./routes/device.route.js";
+import gateRouter from "./routes/gate.route.js";
+import libraryRouter from "./routes/library.route.js";
 
 // express app config
 const app = express();
@@ -27,6 +29,8 @@ app.get("/", (req, res) => {
 
 // api routes
 app.use("/api/devices", deviceRouter);
+app.use("/api/gates", gateRouter);
+app.use("/api/libraries", libraryRouter);
 
 // start server
 app.listen(PORT, () => {
