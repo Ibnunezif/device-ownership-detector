@@ -239,4 +239,39 @@ export const scanDevice = async (req, res) => {
   }
 };
 
-export { createMovement, getMovements, scanDevice };
+// GET /api/movements/alerts
+// Returns recent movements with alert_flag = true
+// Access: security_staff | security_chief
+export const getAlertMovements = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized: user missing" });
+    }
+    const allowed = ["security_staff", "security_chief"];
+    if (!allowed.includes(req.user.role)) {
+      return res.status(403).json({ success: false, message: "Forbidden" });
+    }
+
+    const movements = await Movement.find({
+      alert_flag: true,
+    })
+      .sort({ createdAt: -1 })
+      .populate("device_id")
+      .populate("gate_id")
+      .populate("library_id")
+      .populate("performed_by_user_id");
+
+    return res.json({ success: true, movements });
+  } catch (error) {
+    console.error("Fetch alert movements failed", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch alert movements",
+      error: error.message,
+    });
+  }
+};
+
+export { createMovement, getMovements, scanDevice, getAlertMovements };
