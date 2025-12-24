@@ -7,6 +7,11 @@ const movementSchema = new mongoose.Schema(
       ref: "Device",
       required: true,
     },
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     gate_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Gate",
