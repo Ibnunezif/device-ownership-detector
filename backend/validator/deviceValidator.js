@@ -89,4 +89,4 @@ export const updateDeviceValidator = Joi.object({
   status: Joi.string().valid("pending", "approved", "stolen", "blocked"),
   barcode_data: Joi.string().trim(),
   id_generated_by: Joi.string().pattern(objectIdRegex),
-}).options({ abortEarly: false });
+}).options({ abortEarly: false }).min(1);

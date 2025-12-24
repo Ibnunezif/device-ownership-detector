@@ -33,12 +33,12 @@ export const registrationValidator = Joi.object({
     .trim()
     .min(2)
     .max(50)
-    .required(),
+    .optional(),
 
   batch: Joi.string()
     .trim()
     .max(20)
-    .required(),
+    .optional(),
 
   role: Joi.string()
     .valid('student', 'staff', 'admin', 'security_staff', 'security_chief')

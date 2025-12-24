@@ -11,8 +11,8 @@ const userSchema = new Schema(
     profile_picture: { type: String, required: false, trim: true },
     phone_number: { type: String, required: true, trim: true },
     university_id: { type: String, required: true, unique: true, trim: true },
-    department: { type: String, required: true, trim: true },
-    batch: { type: String, required: true, trim: true },
+    department: { type: String, trim: true },
+    batch: { type: String, trim: true },
     role: {
       type: String,
       enum: ['student', 'staff', 'admin', 'security_staff', 'security_chief'],
