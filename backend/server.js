@@ -4,8 +4,9 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
-import workoutRoutes from './routes/workouts.js';
+// import workoutRoutes from './routes/workouts.js';
 import userRoutes from './routes/users.js';
+import deviceRouter from "./routes/device.route.js";
 
 // express app
 const app = express();
@@ -32,8 +33,10 @@ app.use((req, res, next) => {
 });
 
 // routes
-app.use('/api/workouts', workoutRoutes);
+// app.use('/api/workouts', workoutRoutes);
 app.use('/api/user', userRoutes);
+// api routes
+app.use("/api/devices", deviceRouter);
 
 // connect to db
 mongoose
@@ -49,3 +52,6 @@ mongoose
   .catch((error) => {
     console.error(error);
   });
+
+
+
