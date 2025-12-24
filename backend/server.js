@@ -7,6 +7,9 @@ import cors from 'cors';
 // import workoutRoutes from './routes/workouts.js';
 import userRoutes from './routes/users.js';
 import deviceRouter from "./routes/device.route.js";
+import gateRouter from "./routes/gate.route.js";
+import libraryRouter from "./routes/library.route.js";
+import movementRouter from "./routes/movement.route.js";
 
 // express app
 const app = express();
@@ -37,6 +40,9 @@ app.use((req, res, next) => {
 app.use('/api/user', userRoutes);
 // api routes
 app.use("/api/devices", deviceRouter);
+app.use("/api/gates", gateRouter);
+app.use("/api/libraries", libraryRouter);
+app.use("/api/movements", movementRouter);
 
 // connect to db
 mongoose
