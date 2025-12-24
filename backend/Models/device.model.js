@@ -26,7 +26,7 @@ const deviceSchema = new mongoose.Schema(
 
     color: { type: String },
 
-    device_photo: { type: String }, // Cloudinary URL
+    device_photo: { type: String,required: true}, // Cloudinary URL
 
     status: {
       type: String,

@@ -1,25 +1,65 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
+import { handleError } from "../utils/responseHandler.js";
 
-const requireAuth = async (req,res,next) =>{
-        const {authorization} = req.headers
+const requireAuth = async (req, res, next) => {
+  const { authorization } = req.headers;
 
-        if (!authorization){
-           return res.status(401).json({error:"The authorization token required"});
-        }
+  // No token provided
+  if (!authorization) {
+    return handleError(
+      res,
+      401,
+      "Please log in to continue"
+    );
+  }
 
-        const token = authorization.split(" ")[1]
+  // Invalid format
+  if (!authorization.startsWith("Bearer ")) {
+    return handleError(
+      res,
+      401,
+      "Please log in again"
+    );
+  }
 
-        try {
-            const {_id} = jwt.verify(token,process.env.SECRET);
-            req.user = await User.findOne({_id}).select("_id")
-            next()
+  const token = authorization.split(" ")[1];
 
-        }catch (error){
-            console.log(error)
-            return res.status(401).json({error:"Request is not authorized!"})
+  try {
+    const { _id } = jwt.verify(token, process.env.SECRET);
 
-        }
-}
+    const user = await User.findById(_id).select("_id role email");
+
+    if (!user) {
+      return handleError(
+        res,
+        401,
+        "Your session is no longer valid. Please log in again"
+      );
+    }
+
+    req.user = user;
+    next();
+
+  } catch (error) {
+    console.error("Auth error:", error);
+
+    // Expired token
+    if (error.name === "TokenExpiredError") {
+      return handleError(
+        res,
+        401,
+        "Your session has expired. Please log in again"
+      );
+    }
+
+    // Invalid token or any JWT issue
+    return handleError(
+      res,
+      401,
+      "Please log in again"
+    );
+  }
+};
 
 export default requireAuth;
