@@ -29,4 +29,5 @@ deviceRouter.get("/", requireAuth, requireRole("security_chief","security_staff"
 deviceRouter.delete("/:id", requireAuth, requireRole("security_chief"), deleteDevice,multerErrorHandler);
 
 
+
 export default deviceRouter;

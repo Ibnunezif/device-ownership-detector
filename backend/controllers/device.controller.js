@@ -3,11 +3,13 @@ import { createDeviceValidator, updateDeviceValidator } from "../validator/devic
 import { handleError, handleSuccess } from "../utils/responseHandler.js";
 import deleteCloudinaryImage from "../utils/cloudinaryDelete.js";
 import mongoose from "mongoose";
+import DeviceType from "../models/deviceTypeModel.js"; 
+
 
 // POST /api/devices/register
 const registerDevice = async (req, res) => {
   try {
-    // 1️ Validate input with Joi
+    // 1️⃣ Validate input with Joi
     const { error, value } = createDeviceValidator.validate(req.body, {
       abortEarly: false,
     });
@@ -29,21 +31,27 @@ const registerDevice = async (req, res) => {
       barcode_data,
     } = value;
 
-    // 2️ Check if device already exists
+    // 2️⃣ Check if device type exists
+    const deviceTypeExists = await DeviceType.findById(device_type_id);
+    if (!deviceTypeExists) {
+      return handleError(res, 404, "Device type not found");
+    }
+
+    // 3️⃣ Check if device already exists
     const existingDevice = await Device.findOne({ serial_number });
     if (existingDevice) {
       return handleError(res, 409, "This device is already registered");
     }
 
-    // 3️ Handle device photo (Cloudinary)
+    // 4️⃣ Handle device photo (Cloudinary)
     let devicePhotoUrl = "";
     if (req.file?.path) {
       devicePhotoUrl = req.file.path;
-    }else{
+    } else {
       return handleError(res, 400, "Device photo is required");
     }
 
-    // 4️ Create device
+    // 5️⃣ Create device
     const device = await Device.create({
       user_id: req.user._id,
       device_type_id,
@@ -55,7 +63,7 @@ const registerDevice = async (req, res) => {
       device_photo: devicePhotoUrl,
     });
 
-    // 5️ Success response with device_photo
+    // 6️⃣ Success response
     return handleSuccess(res, 201, "Device registered successfully", {
       device: {
         id: device._id,
@@ -63,7 +71,7 @@ const registerDevice = async (req, res) => {
         model: device.model,
         serial_number: device.serial_number,
         status: device.status,
-        device_photo: device.device_photo || null, // Include profile picture if exists
+        device_photo: device.device_photo || null,
       },
       owner: {
         id: req.user._id,
@@ -86,6 +94,10 @@ const registerDevice = async (req, res) => {
 const deviceUpdate = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return handleError(res, 400, "Invalid device ID");
+    }
 
     // 1️⃣ Validate input
     const { error, value } = updateDeviceValidator.validate(req.body, {
@@ -247,6 +259,10 @@ const deleteDevice = async (req, res) => {
   try {
     const { id } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return handleError(res, 400, "Invalid device ID");
+    }
+
     // 1️ Find device
     const device = await Device.findById(id);
     if (!device) {
@@ -268,5 +284,7 @@ const deleteDevice = async (req, res) => {
     return handleError(res, 500, "Something went wrong while deleting device");
   }
 };
+
+
 
 export {registerDevice,deviceUpdate,getAllDevices,deleteDevice};

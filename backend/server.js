@@ -7,6 +7,7 @@ import cors from 'cors';
 // import workoutRoutes from './routes/workouts.js';
 import userRoutes from './routes/users.js';
 import deviceRouter from "./routes/device.route.js";
+import deviceTypeRouter from './routes/deviceType.route.js';
 
 // express app
 const app = express();
@@ -37,6 +38,8 @@ app.use((req, res, next) => {
 app.use('/api/user', userRoutes);
 // api routes
 app.use("/api/devices", deviceRouter);
+//device types
+app.use("/api/device-type", deviceTypeRouter);
 
 // connect to db
 mongoose
