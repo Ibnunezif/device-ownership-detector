@@ -8,6 +8,8 @@ import cors from 'cors';
 import userRoutes from './routes/users.js';
 import deviceRouter from "./routes/device.route.js";
 import deviceTypeRouter from './routes/deviceType.route.js';
+import gateRouter from './routes/gate.route.js';
+
 
 // express app
 const app = express();
@@ -40,6 +42,8 @@ app.use('/api/user', userRoutes);
 app.use("/api/devices", deviceRouter);
 //device types
 app.use("/api/device-type", deviceTypeRouter);
+//gates
+app.use("/api/gates", gateRouter);
 
 // connect to db
 mongoose
