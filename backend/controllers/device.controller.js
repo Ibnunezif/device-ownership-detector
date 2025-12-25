@@ -82,7 +82,6 @@ const registerDevice = async (req, res) => {
   }
 };
 
-
 // PATCH /api/devices/update/:id
 const deviceUpdate = async (req, res) => {
   try {
@@ -149,9 +148,6 @@ const deviceUpdate = async (req, res) => {
     return handleError(res, 500, "Something went wrong while updating the device");
   }
 };
-
-
-
 
 // GET /api/devices
 const getAllDevices = async (req, res) => {
