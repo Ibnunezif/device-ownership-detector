@@ -4,6 +4,7 @@ import { handleError, handleSuccess } from "../utils/responseHandler.js";
 import deleteCloudinaryImage from "../utils/cloudinaryDelete.js";
 import mongoose from "mongoose";
 import DeviceType from "../models/deviceTypeModel.js"; 
+import User from "../models/userModel.js";
 
 
 // POST /api/devices/register
@@ -23,13 +24,18 @@ const registerDevice = async (req, res) => {
     }
 
     const {
+      user_id,
       device_type_id,
       brand,
       model,
       serial_number,
       color,
-      barcode_data,
     } = value;
+
+    const deviceOwner = await User.findById(user_id);
+    if (!deviceOwner) {
+      return handleError(res, 404, "User not found");
+    }
 
     // 2️⃣ Check if device type exists
     const deviceTypeExists = await DeviceType.findById(device_type_id);
@@ -51,9 +57,11 @@ const registerDevice = async (req, res) => {
       return handleError(res, 400, "Device photo is required");
     }
 
+    const barcode_data = deviceOwner.university_id +user_id+serial_number;
+
     // 5️⃣ Create device
     const device = await Device.create({
-      user_id: req.user._id,
+      user_id: user_id,
       device_type_id,
       brand,
       model,
@@ -71,10 +79,12 @@ const registerDevice = async (req, res) => {
         model: device.model,
         serial_number: device.serial_number,
         status: device.status,
+        barcode_data: device.barcode_data,
         device_photo: device.device_photo || null,
       },
       owner: {
-        id: req.user._id,
+        id: user_id,
+        name: deviceOwner.first_name + " " + deviceOwner.last_name,
       },
       meta: {
         createdAt: device.createdAt,
@@ -144,12 +154,12 @@ const deviceUpdate = async (req, res) => {
         model: updatedDevice.model,
         serial_number: updatedDevice.serial_number,
         color: updatedDevice.color,
-        barcode_data: updatedDevice.barcode_data,
         status: updatedDevice.status,
         device_photo: updatedDevice.device_photo || null,
       },
       owner: {
         id: updatedDevice.user_id,
+        name : updatedDevice.user_id.first_name + " " + updatedDevice.user_id.last_name,
       },
       meta: {
         updatedAt: updatedDevice.updatedAt,
