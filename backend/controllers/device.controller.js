@@ -295,6 +295,48 @@ const deleteDevice = async (req, res) => {
   }
 };
 
+const getDataForPDF = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate device ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return handleError(res, 400, "Invalid device ID");
+    }
+
+    // Find device by ID, populate user and device type
+    const device = await Device.findById(id)
+      .populate("user_id")         // populate user
+      .populate("device_type_id"); // populate device type
+
+    if (!device) {
+      return handleError(res, 404, "Device not found");
+    }
+
+    const user = device.user_id || {};
+
+    // Prepare data to return
+    const data = {
+      name: `${user.first_name || ""} ${user.last_name || ""}`.trim(),
+      university_id: user.university_id || "",
+      image_of_user: user.image || "",
+
+      device_type_name: device.device_type_id?.name || "",
+      device_brand: device.brand || "",
+      device_model: device.model || "",
+      device_color: device.color || "",
+      device_serial_number: device.serial_number || "",
+      image_of_device: device.device_photo || "",
+      barcode: device.barcode_data || "",
+    };
+    return handleSuccess(res, 200, "Devices fetched successfully",data);
+  } catch (error) {
+    console.error("Generate PDF error:", error);
+    return handleError(res, 500, "Something went wrong while fetching device data");
+  }
+};
 
 
-export {registerDevice,deviceUpdate,getAllDevices,deleteDevice};
+
+
+export {registerDevice,deviceUpdate,getAllDevices,deleteDevice,getDataForPDF};

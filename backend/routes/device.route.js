@@ -1,5 +1,5 @@
 import express from "express";
-import {registerDevice,deviceUpdate,getAllDevices,deleteDevice} from "../controllers/device.controller.js";
+import {registerDevice,deviceUpdate,getAllDevices,deleteDevice,getDataForPDF} from "../controllers/device.controller.js";
 import requireAuth from "../middleware/requireAuth.js";
 import requireRole from "../middleware/requireRole.js";
 import upload from "../middleware/multer.js";
@@ -26,6 +26,9 @@ deviceRouter.patch(
 );
 
 deviceRouter.get("/", requireAuth, requireRole("security_chief","security_staff"), getAllDevices);
+
+deviceRouter.get('/data-for-pdf/:id', requireAuth, requireRole("security_chief"),getDataForPDF);
+
 deviceRouter.delete("/:id", requireAuth, requireRole("security_chief"), deleteDevice,multerErrorHandler);
 
 
