@@ -27,20 +27,31 @@ const userSchema = new Schema(
 
 
 // SIGNUP
-userSchema.statics.signup = async function (userData) {
-  // Validate user data with Joi
-  const validatedData = await registrationValidator.validateAsync(userData,{ abortEarly: false });
+userSchema.statics.signup = async function (userData, profilePictureUrl = null) {
+  // Joi validation
+  const validatedData = await registrationValidator.validateAsync(userData, {
+    abortEarly: false,
+  });
 
-  const { first_name, last_name, phone_number, university_id, department, batch, role, email, password } =
-    validatedData;
+  const {
+    first_name,
+    last_name,
+    phone_number,
+    university_id,
+    department,
+    batch,
+    role,
+    email,
+    password,
+  } = validatedData;
 
-  // Check if email exists
+  // Check email
   const emailExists = await this.findOne({ email });
-  if (emailExists) throw new Error('Email already in use');
+  if (emailExists) throw new Error("Email already in use");
 
-  // Check if university ID exists
+  // Check university ID
   const idExists = await this.findOne({ university_id });
-  if (idExists) throw new Error('University ID already registered');
+  if (idExists) throw new Error("University ID already registered");
 
   // Hash password
   const salt = await bcrypt.genSalt(10);
@@ -54,13 +65,15 @@ userSchema.statics.signup = async function (userData) {
     university_id,
     department,
     batch,
-    role: role || 'student',
+    role: role || "student",
     email,
     password: hashedPassword,
+    profile_picture: profilePictureUrl, 
   });
 
   return user;
 };
+
 
 // LOGIN
 userSchema.statics.login = async function (userData) {

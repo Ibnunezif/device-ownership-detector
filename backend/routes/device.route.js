@@ -12,6 +12,7 @@ deviceRouter.post(
   "/register",
    requireAuth,
   upload.single("device_photo"),
+  multerErrorHandler,
   registerDevice
 );
 
