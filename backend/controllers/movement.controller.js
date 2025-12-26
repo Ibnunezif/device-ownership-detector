@@ -3,6 +3,7 @@ import Device from "../models/device.model.js";
 import User from "../models/userModel.js";
 import Gate from "../Models/gatesModel.js";
 import Movement from "../Models/movementModel.js";
+import Library from "../Models/librariesModel.js";
 import { scanDeviceValidator } from "../validator/movementValidator.js";
 import { handleSuccess, handleError } from "../utils/responseHandler.js";
 
@@ -114,4 +115,42 @@ const scanDevice = async (req, res) => {
   }
 };
 
-export { scanDevice };
+// GET /api/movements/dashboard
+const getDashboardSummary = async (req, res) => {
+  try {
+    // Count total entities
+    const totalDevices = await Device.countDocuments();
+    const totalUsers = await User.countDocuments();
+    const totalGates = await Gate.countDocuments();
+    const totalLibraries = await Library.countDocuments();
+    const totalMovements = await Movement.countDocuments();
+
+    // Count users by role
+    const totalStudents = await User.countDocuments({ role: "student" });
+    const totalStaff = await User.countDocuments({ role: "staff" });
+    const totalAdmins = await User.countDocuments({ role: "admin" });
+    const totalSecurityChiefs = await User.countDocuments({ role: "security_chief" });
+    const totalSecurityStaff = await User.countDocuments({ role: "security_staff" });
+
+    return handleSuccess(res, 200, "Dashboard summary fetched successfully", {
+      totalDevices,
+      totalUsers,
+      totalGates,
+      totalLibraries,
+      totalMovements,
+      roles: {
+        students: totalStudents,
+        staff: totalStaff,
+        admins: totalAdmins,
+        securityChiefs: totalSecurityChiefs,
+        securityStaff: totalSecurityStaff,
+      },
+    });
+  } catch (error) {
+    console.error("Dashboard summary error:", error);
+    return handleError(res, 500, "Failed to fetch dashboard summary");
+  }
+};
+
+
+export { scanDevice,getDashboardSummary };

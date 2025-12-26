@@ -1,7 +1,7 @@
 import express from "express";
 import requireAuth from "../middleware/requireAuth.js";
 import requireRole from "../middleware/requireRole.js";
-import { scanDevice } from "../controllers/movement.controller.js";
+import { scanDevice,getDashboardSummary } from "../controllers/movement.controller.js";
 
 const movementRouter = express.Router();
 
@@ -15,6 +15,14 @@ movementRouter.post(
   requireAuth,
   requireRole("security_staff", "security_chief"),
   scanDevice
+);
+
+
+movementRouter.get(
+  "/dashboard",
+  requireAuth,
+  requireRole("admin", "security_chief"),
+  getDashboardSummary
 );
 
 export default movementRouter;
