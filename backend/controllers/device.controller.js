@@ -174,12 +174,12 @@ const deviceUpdate = async (req, res) => {
 // GET /api/devices
 const getAllDevices = async (req, res) => {
   try {
-    // 1️ Pagination
+    // Pagination
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit) || 10, 1);
     const skip = (page - 1) * limit;
 
-    // 2️ Filters
+    // Filters
     const {
       status,
       model,
@@ -187,6 +187,7 @@ const getAllDevices = async (req, res) => {
       department,
       serial_number,
       search,
+      university_id, // new
     } = req.query;
 
     const filter = {};
@@ -206,32 +207,43 @@ const getAllDevices = async (req, res) => {
       ];
     }
 
-    // 3️ Query
-    let query = Device.find(filter)
+    // If university_id is provided, find the user first
+    let userFilter = {};
+    if (university_id) {
+      const user = await User.findOne({ university_id });
+      if (!user) {
+        return handleError(res, 404, "User not found");
+      }
+      userFilter.user_id = user._id;
+    }
+
+    // Merge filters
+    const finalFilter = { ...filter, ...userFilter };
+
+    // Query
+    let devices = await Device.find(finalFilter)
       .populate({
         path: "user_id",
-        select: "first_name last_name email department",
+        select: "first_name last_name email department university_id profile_picture",
         ...(department && { match: { department } }),
       })
-      // .populate({
-      //   path: "device_type_id",
-      //   select: "name",
-      // })
+      .populate({
+        path: "device_type_id",
+        select: "name",
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-
-    let devices = await query;
 
     // Remove devices whose user didn't match department filter
     if (department) {
       devices = devices.filter((d) => d.user_id !== null);
     }
 
-    // 4️ Count for pagination
-    const total = await Device.countDocuments(filter);
+    // Total count for pagination
+    const total = await Device.countDocuments(finalFilter);
 
-    // 5️ Success response
+    // Success response
     return handleSuccess(res, 200, "Devices fetched successfully", {
       pagination: {
         total,
@@ -245,6 +257,7 @@ const getAllDevices = async (req, res) => {
         model: device.model,
         serial_number: device.serial_number,
         status: device.status,
+        barcode: device.barcode_data || null, // added barcode
         device_photo: device.device_photo || null,
         owner: device.user_id
           ? {
@@ -252,6 +265,8 @@ const getAllDevices = async (req, res) => {
               name: `${device.user_id.first_name} ${device.user_id.last_name}`,
               email: device.user_id.email,
               department: device.user_id.department,
+              university_id: device.user_id.university_id,
+              image: device.user_id.profile_picture || null,
             }
           : null,
         device_type: device.device_type_id?.name || null,
@@ -263,6 +278,10 @@ const getAllDevices = async (req, res) => {
     return handleError(res, 500, "Failed to fetch devices");
   }
 };
+
+
+
+
 
 // DELETE /api/devices/:id
 const deleteDevice = async (req, res) => {

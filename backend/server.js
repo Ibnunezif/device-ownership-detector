@@ -9,6 +9,9 @@ import userRoutes from './routes/users.js';
 import deviceRouter from "./routes/device.route.js";
 import deviceTypeRouter from './routes/deviceType.route.js';
 import gateRouter from './routes/gate.route.js';
+import libraryRouter from './routes/library.route.js';
+import movementRouter from './routes/scan_and_log.route.js';
+
 
 
 // express app
@@ -44,6 +47,10 @@ app.use("/api/devices", deviceRouter);
 app.use("/api/device-type", deviceTypeRouter);
 //gates
 app.use("/api/gates", gateRouter);
+//Library routes
+app.use("/api/libraries", libraryRouter)
+//scann and log devices
+app.use("/api/movements", movementRouter)
 
 // connect to db
 mongoose

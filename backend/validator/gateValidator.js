@@ -11,4 +11,4 @@ export const gateUpdateValidator = Joi.object({
   name: Joi.string().min(2).max(100).optional(),
   description: Joi.string().min(3).max(500).optional(),
   location: Joi.string().min(2).max(100).optional(),
-});
+}).min(1).message("At least one field must be updated");
