@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import Device from "../models/device.model.js";
 import User from "../models/userModel.js";
-import Gate from "../Models/gatesModel.js";
-import Movement from "../Models/movementModel.js";
-import Library from "../Models/librariesModel.js";
+import Gate from "../models/gatesModel.js";
+import Movement from "../models/movementModel.js";
+import Library from "../models/librariesModel.js";
 import { scanDeviceValidator } from "../validator/movementValidator.js";
 import { handleSuccess, handleError } from "../utils/responseHandler.js";
 

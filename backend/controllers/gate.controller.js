@@ -1,6 +1,6 @@
 // controllers/gate.controller.js
 import mongoose from "mongoose";
-import Gate from "../Models/gatesModel.js";
+import Gate from "../models/gatesModel.js";
 import {
   gateCreateValidator,
   gateUpdateValidator,

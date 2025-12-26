@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Library from "../Models/librariesModel.js"
+import Library from "../models/librariesModel.js"
 import { handleSuccess, handleError } from "../utils/responseHandler.js";
 import {
   libraryCreateValidator,
