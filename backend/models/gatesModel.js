@@ -23,6 +23,6 @@ const gateSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Gets = mongoose.model("Gate", gateSchema);
+const Gate = mongoose.model("Gate", gateSchema);
 
-export default Gets;
+export default Gate;
