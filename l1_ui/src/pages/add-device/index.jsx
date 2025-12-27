@@ -9,6 +9,8 @@ import Icon from '../../components/AppIcon';
 import DeviceInfoForm from './components/DeviceInfoForm';
 import DevicePhotoUpload from './components/DevicePhotoUpload';
 import RegistrationSuccessModal from './components/RegistrationSuccessModal';
+import { registerDevice } from '../../services/deviceService';
+
 
 const AddDevice = () => {
   const navigate = useNavigate();
@@ -105,52 +107,58 @@ const AddDevice = () => {
     return Object.keys(newErrors)?.length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e?.preventDefault();
-    setSubmitError('');
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setSubmitError('');
 
-    if (!validateForm()) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
+  if (!validateForm()) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+  try {
+    const devicePayload = {
+      brand: formData.brand,
+      deviceType: formData.deviceType,
+      model: formData.model,
+      serialNumber: formData.serialNumber,
+      purchaseDate: formData.purchaseDate,
+      warrantyExpiry: formData.warrantyExpiry,
+      description: formData.description,
+      ownerId: user.id
+    };
 
-      const deviceData = {
-        id: `DEV${Date.now()}`,
-        ...formData,
-        photos: photos?.map(p => p?.preview),
-        status: 'ACTIVE',
-        registeredAt: new Date()?.toISOString(),
-        qrCode: `QR${Date.now()}`,
-        owner: user
-      };
+    const savedDevice = await registerDevice(devicePayload, photos);
 
-      setRegisteredDevice(deviceData);
-      setShowSuccessModal(true);
+    setRegisteredDevice(savedDevice);
+    setShowSuccessModal(true);
 
-      setFormData({
-        brand: '',
-        deviceType: '',
-        model: '',
-        serialNumber: '',
-        purchaseDate: '',
-        warrantyExpiry: '',
-        description: ''
-      });
-      setPhotos([]);
-      setErrors({});
+    setFormData({
+      brand: '',
+      deviceType: '',
+      model: '',
+      serialNumber: '',
+      purchaseDate: '',
+      warrantyExpiry: '',
+      description: ''
+    });
 
-    } catch (error) {
-      setSubmitError('Failed to register device. Please try again.');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    setPhotos([]);
+    setErrors({});
+
+  } catch (error) {
+    setSubmitError(
+      error?.response?.data?.message || 
+      'Failed to register device. Please try again.'
+    );
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   const handleCancel = () => {
     navigate('/student-dashboard');

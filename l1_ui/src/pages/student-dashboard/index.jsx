@@ -13,13 +13,8 @@ import ReportTheftModal from './components/ReportTheftModal';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
-  const [user] = useState({
-    id: 'STU001',
-    name: 'Sarah Johnson',
-    email: 'sarah.johnson@university.edu',
-    role: 'student',
-    studentId: 'STU2024001'
-  });
+const storedUser = JSON.parse(localStorage.getItem('user'));
+const [user, setUser] = useState(storedUser);
 
   const [devices, setDevices] = useState([
   {
@@ -145,7 +140,7 @@ const StudentDashboard = () => {
   }, []);
 
   return (
-    <AuthenticationGuard user={user} requiredRoles={['student']}>
+    <AuthenticationGuard user={user} requiredRoles={['STUDENT']}>
       <div className="min-h-screen bg-background">
         <RoleBasedNavigation user={user} />
 

@@ -60,38 +60,32 @@ const Login = () => {
   };
 
  // ✅ Real login using backend + JWT
-  const handleLogin = async (formData) => {
-    setLoading(true);
-    setError('');
+const handleLogin = async (formData) => {
+  setLoading(true);
+  setError('');
 
-    try {
-      // 1. Login → backend returns token
-      await loginUser(formData);
+  try {
+    const { token, user } = await loginUser(formData);
 
-      // 2. Optional remember me flag
-      if (formData?.rememberMe) {
-        localStorage.setItem('rememberMe', 'true');
-      }
+    setShowSuccessMessage(true);
 
-      setShowSuccessMessage(true);
+    // Redirect based on role
+    const role = user.role; 
+    setTimeout(() => {
+      redirectBasedOnRole(role);
+    }, 1000);
 
-      // 3. Decode role from JWT
-      const role = getUserRole();
+  } catch (err) {
+    console.error(err);
+    setError(
+      err.response?.data?.message || err.message || 'Invalid email or password'
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
-      // 4. Redirect by role
-      setTimeout(() => {
-        redirectBasedOnRole(role);
-      }, 1000);
 
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        'Invalid email or password. Please try again.'
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
 
   return (

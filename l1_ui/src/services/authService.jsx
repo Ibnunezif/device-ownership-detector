@@ -26,12 +26,15 @@ export const loginUser = async (formData) => {
     password: formData.password
   });
 
-  const { token } = response.data;
+  const { token, user } = response.data;
 
+  // Store both token and user
   localStorage.setItem('authToken', token);
+  localStorage.setItem('user', JSON.stringify(user));
 
-  return token;
+  return response.data; // return both token & user
 };
+
 
 /**
  * Logout user
