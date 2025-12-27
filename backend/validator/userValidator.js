@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 // ASTU email regex
-const astuEmailRegex = /^[a-zA-Z]+\\.[a-zA-Z]+@astu\\.edu\\.et$/;
+const astuEmailRegex = /^[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+@astu\.edu\.et$/;
 
 export const updateUserValidator = Joi.object({
   first_name: Joi.string()
