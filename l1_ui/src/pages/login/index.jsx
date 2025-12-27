@@ -4,6 +4,9 @@ import LoginForm from './components/LoginForm';
 import WelcomeSection from './components/WelcomeSection';
 import RegistrationPrompt from './components/RegistrationPrompt';
 import StatusIndicator from '../../components/ui/StatusIndicator';
+import { loginUser } from '../../services/authService';
+import { getUserRole } from '../../utils/tokenUtils';
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -34,63 +37,62 @@ const Login = () => {
   ];
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    const user = localStorage.getItem('user');
-    
-    if (token && user) {
-      const userData = JSON.parse(user);
-      redirectBasedOnRole(userData?.role);
+    const role = getUserRole();
+    if (role) {
+      redirectBasedOnRole(role);
     }
   }, []);
 
   const redirectBasedOnRole = (role) => {
     switch (role) {
-      case 'student': navigate('/student-dashboard', { replace: true });
+      case 'STUDENT':
+        navigate('/student-dashboard', { replace: true });
         break;
-      case 'security': navigate('/security-scan', { replace: true });
+      case 'SECURITY':
+        navigate('/security-scan', { replace: true });
         break;
-      case 'admin': navigate('/admin-dashboard', { replace: true });
+      case 'ADMIN':
+        navigate('/admin-dashboard', { replace: true });
         break;
       default:
-        navigate('/student-dashboard', { replace: true });
+        navigate('/login', { replace: true });
     }
   };
 
+ // ✅ Real login using backend + JWT
   const handleLogin = async (formData) => {
     setLoading(true);
     setError('');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // 1. Login → backend returns token
+      await loginUser(formData);
 
-      const user = mockUsers?.find(
-        u => u?.email === formData?.email && u?.password === formData?.password
-      );
-
-      if (!user) {
-        throw new Error('Invalid email or password. Please check your credentials and try again.');
-      }
-
-      const mockToken = `jwt_token_${Date.now()}_${user?.role}`;
-      
-      localStorage.setItem('authToken', mockToken);
-      localStorage.setItem('user', JSON.stringify(user));
-      
+      // 2. Optional remember me flag
       if (formData?.rememberMe) {
         localStorage.setItem('rememberMe', 'true');
       }
 
       setShowSuccessMessage(true);
 
+      // 3. Decode role from JWT
+      const role = getUserRole();
+
+      // 4. Redirect by role
       setTimeout(() => {
-        redirectBasedOnRole(user?.role);
+        redirectBasedOnRole(role);
       }, 1000);
 
     } catch (err) {
-      setError(err?.message);
+      setError(
+        err.response?.data?.message ||
+        'Invalid email or password. Please try again.'
+      );
+    } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-background">

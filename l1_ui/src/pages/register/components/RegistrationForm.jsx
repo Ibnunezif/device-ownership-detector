@@ -6,6 +6,7 @@ import Button from '../../../components/ui/Button';
 import { Checkbox } from '../../../components/ui/Checkbox';
 import Icon from '../../../components/AppIcon';
 import StatusIndicator from '../../../components/ui/StatusIndicator';
+import { registerUser } from '../../../services/authService';
 
 const RegistrationForm = () => {
   const navigate = useNavigate();
@@ -129,37 +130,51 @@ const RegistrationForm = () => {
     return Object.keys(newErrors)?.length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e?.preventDefault();
-    
-    if (!validateForm()) {
-      setStatusMessage({
-        type: 'error',
-        title: 'Validation Error',
-        message: 'Please correct the errors in the form before submitting'
-      });
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setLoading(true);
-    setStatusMessage(null);
+  // 1. Frontend validation
+  if (!validateForm()) {
+    setStatusMessage({
+      type: 'error',
+      title: 'Validation Error',
+      message: 'Please correct the errors in the form before submitting'
+    });
+    return;
+  }
 
+  setLoading(true);
+  setStatusMessage(null);
+
+  try {
+    // 2. Call service → API → backend
+    await registerUser(formData);
+
+    // 3. Success message
+    setStatusMessage({
+      type: 'success',
+      title: 'Registration Successful',
+      message: `Welcome ${formData.name}! Your account has been created successfully`
+    });
+
+    // 4. Redirect after short delay (UX-friendly)
     setTimeout(() => {
-      setLoading(false);
-      setStatusMessage({
-        type: 'success',
-        title: 'Registration Successful',
-        message: `Welcome ${formData?.name}! Your account has been created successfully`
-      });
-
-      setTimeout(() => {
-        const dashboardPath = formData?.role === 'STUDENT' ?'/student-dashboard' 
-          : formData?.role === 'SECURITY' ?'/security-scan' :'/student-dashboard';
-        
-        navigate(dashboardPath);
-      }, 2000);
+      navigate('/login');
     }, 2000);
-  };
+
+  } catch (error) {
+    // 5. Backend error handling
+    setStatusMessage({
+      type: 'error',
+      title: 'Registration Failed',
+      message:
+        error.response?.data?.message ||
+        'Unable to register. Please try again later.'
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="w-full max-w-md mx-auto">
