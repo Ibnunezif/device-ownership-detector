@@ -3,12 +3,18 @@ import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
 import ErrorBoundary from "./components/ErrorBoundary";
 import NotFound from "./pages/NotFound";
-import DeviceRegistrationPortal from './pages/device-registration-portal';
-import AuthenticationRoleSelection from './pages/authentication-role-selection';
-import DeviceManagementConsole from './pages/device-management-console';
-import RealTimeMonitoringDashboard from './pages/real-time-monitoring-dashboard';
-import SecurityChiefApprovalQueue from './pages/security-chief-approval-queue';
-import SecurityStaffScannerDashboard from './pages/security-staff-scanner-dashboard';
+import AddDevice from './pages/add-device';
+import SecurityScan from './pages/security-scan';
+import Login from './pages/login';
+import StudentDashboard from './pages/student-dashboard';
+import Register from './pages/register';
+
+
+import AdminDashboard from './pages/admin-dashboard';
+import LogsPage from './pages/logs';
+import DeviceDetail from './pages/device-detail';
+import UnauthorizedAccess from './pages/unauthorized-access';
+import StolenDevicesPage from './pages/stolen-devices';
 
 const Routes = () => {
   return (
@@ -17,14 +23,24 @@ const Routes = () => {
       <ScrollToTop />
       <RouterRoutes>
         {/* Define your route here */}
-        <Route path="/" element={<AuthenticationRoleSelection />} />
-        <Route path="/device-registration-portal" element={<DeviceRegistrationPortal />} />
-        <Route path="/authentication-role-selection" element={<AuthenticationRoleSelection />} />
-        <Route path="/device-management-console" element={<DeviceManagementConsole />} />
-        <Route path="/real-time-monitoring-dashboard" element={<RealTimeMonitoringDashboard />} />
-        <Route path="/security-chief-approval-queue" element={<SecurityChiefApprovalQueue />} />
-        <Route path="/security-staff-scanner-dashboard" element={<SecurityStaffScannerDashboard />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/add-device" element={<AddDevice />} />
+        <Route path="/security-scan" element={<SecurityScan />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/student-dashboard" element={<StudentDashboard />} />
+        <Route path="/register" element={<Register />} />
+       
+
+
+         <Route path="/" element={<Login />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/logs" element={<LogsPage />} />
+        <Route path="/device-detail" element={<DeviceDetail />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/unauthorized-access" element={<UnauthorizedAccess />} />
+        <Route path="/stolen-devices" element={<StolenDevicesPage />} />
         <Route path="*" element={<NotFound />} />
+
       </RouterRoutes>
       </ErrorBoundary>
     </BrowserRouter>
