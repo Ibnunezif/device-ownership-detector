@@ -140,7 +140,7 @@ const [user, setUser] = useState(storedUser);
   }, []);
 
   return (
-    <AuthenticationGuard user={user} requiredRoles={['STUDENT']}>
+    <AuthenticationGuard requiredRoles={['STUDENT']}>
       <div className="min-h-screen bg-background">
         <RoleBasedNavigation user={user} />
 

@@ -1,27 +1,28 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/devices'; // adjust if needed
-
-export const registerDevice = async (deviceData, photos) => {
+export const registerDevice = async (devicePayload, photos) => {
   const formData = new FormData();
 
-  // Append device fields
-  Object.keys(deviceData).forEach((key) => {
-    if (deviceData[key]) {
-      formData.append(key, deviceData[key]);
+  formData.append('user_id', devicePayload.ownerId);
+  formData.append('device_type_id', devicePayload.deviceType); // must match backend ID
+  formData.append('brand', devicePayload.brand);
+  formData.append('model', devicePayload.model);
+  formData.append('serial_number', devicePayload.serialNumber);
+  formData.append('color', devicePayload.color || 'Black');
+  photos.forEach((photo) => {
+    formData.append('device_photo', photo.file);
+  });
+ const token = localStorage.getItem('authToken');
+  const response = await axios.post(
+    'https://pc-ownership-backend-api.onrender.com/api/devices/register',
+    formData,
+    {
+      headers: { 'Content-Type': 'multipart/form-data',
+                 'Authorization': `Bearer ${token}`
+       }
     }
-  });
-
-  // Append photos (max 4)
-  photos.slice(0, 4).forEach((photo) => {
-    formData.append('photos', photo.file);
-  });
-
-  const response = await axios.post(API_URL, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  );
 
   return response.data;
 };
+

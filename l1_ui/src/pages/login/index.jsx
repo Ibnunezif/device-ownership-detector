@@ -14,28 +14,6 @@ const Login = () => {
   const [error, setError] = useState('');
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  const mockUsers = [
-    {
-      email: 'student@college.edu',
-      password: 'student123',
-      role: 'student',
-      name: 'John Smith',
-      studentId: 'STU2024001'
-    },
-    {
-      email: 'security@college.edu',
-      password: 'security123',
-      role: 'security',
-      name: 'Mike Johnson'
-    },
-    {
-      email: 'admin@college.edu',
-      password: 'admin123',
-      role: 'admin',
-      name: 'Sarah Williams'
-    }
-  ];
-
   useEffect(() => {
     const role = getUserRole();
     if (role) {
@@ -70,7 +48,7 @@ const handleLogin = async (formData) => {
     setShowSuccessMessage(true);
 
     // Redirect based on role
-    const role = user.role; 
+    const role = user.role.toUpperCase();
     setTimeout(() => {
       redirectBasedOnRole(role);
     }, 1000);

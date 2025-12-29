@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'https://pc-owner-detector.onrender.com/api/',
+  baseURL: 'https://pc-ownership-backend-api.onrender.com/api',
   headers: {
     'Content-Type': 'application/json'
   }

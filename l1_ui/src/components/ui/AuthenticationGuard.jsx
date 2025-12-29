@@ -1,38 +1,57 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const AuthenticationGuard = ({ children, user, requiredRoles = [] }) => {
+const AuthenticationGuard = ({ children, requiredRoles = [] }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const user = (() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch {
+      return null;
+    }
+  })();
+
   useEffect(() => {
     const publicPaths = ['/login', '/register'];
-    const isPublicPath = publicPaths?.includes(location?.pathname);
+    const isPublicPath = publicPaths.includes(location.pathname);
 
+    // ❌ Not logged in
     if (!user && !isPublicPath) {
-      navigate('/login', { 
-        state: { from: location?.pathname },
-        replace: true 
+      navigate('/login', {
+        state: { from: location.pathname },
+        replace: true
       });
       return;
     }
 
-    if (user && requiredRoles?.length > 0) {
-      const hasRequiredRole = requiredRoles?.includes(user?.role);
-      
-      if (!hasRequiredRole) {
+    // ❌ Logged in but wrong role
+    if (user && requiredRoles.length > 0) {
+      const role = user.role.toUpperCase();
+      const allowedRoles = requiredRoles.map(r => r.toUpperCase());
+
+      if (!allowedRoles.includes(role)) {
         navigate('/unauthorized', { replace: true });
         return;
       }
     }
 
+    // ❌ Logged in but visiting login/register
     if (user && isPublicPath) {
-      const dashboardPath = user?.role === 'student' ?'/student-dashboard' 
-        : user?.role === 'security' ?'/security-scan' :'/student-dashboard';
-      
+      const role = user.role.toUpperCase();
+
+      const dashboardPath =
+        role === 'STUDENT'
+          ? '/student-dashboard'
+          : role === 'SECURITY'
+          ? '/security-scan'
+          : '/admin-dashboard';
+
       navigate(dashboardPath, { replace: true });
     }
-  }, [user, location?.pathname, navigate, requiredRoles]);
+  }, [user, location.pathname, navigate, requiredRoles]);
 
   return <>{children}</>;
 };

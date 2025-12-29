@@ -41,27 +41,26 @@ const RoleBasedNavigation = ({ user }) => {
     }
   ];
 
-  const filteredNavItems = navigationItems?.filter(item => 
+  const filteredNavItems = navigationItems?.filter(item =>
     item?.roles?.includes(user?.role || 'guest')
   );
 
+  const fullName = user ? `${user.first_name} ${user.last_name}` : 'User';
+
+  // Logout function
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('rememberMe');
+    navigate('/login', { replace: true });
+  };
+
   const handleNavigation = (path) => {
-   localStorage.removeItem('authToken');
-  localStorage.removeItem('user');
-  localStorage.removeItem('rememberMe');
-
-  // Optional: clear everything
-  // localStorage.clear();
-
-  navigate('/login', { replace: true });
-
     navigate(path);
     setIsMobileMenuOpen(false);
   };
 
-  const isActivePath = (path) => {
-    return location?.pathname === path;
-  };
+  const isActivePath = (path) => location?.pathname === path;
 
   useEffect(() => {
     const handleResize = () => {
@@ -69,7 +68,6 @@ const RoleBasedNavigation = ({ user }) => {
         setIsMobileMenuOpen(false);
       }
     };
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -114,9 +112,7 @@ const RoleBasedNavigation = ({ user }) => {
               {user && (
                 <div className="flex items-center space-x-3">
                   <div className="text-right">
-                    <p className="text-sm font-medium text-foreground">
-                      {user?.name || 'User'}
-                    </p>
+                    <p className="text-sm font-medium text-foreground">{fullName}</p>
                     <p className="text-xs text-muted-foreground capitalize font-caption">
                       {user?.role}
                     </p>
@@ -126,7 +122,7 @@ const RoleBasedNavigation = ({ user }) => {
                     size="sm"
                     iconName="LogOut"
                     iconPosition="left"
-                    onClick={() => handleNavigation('/login')}
+                    onClick={handleLogout}
                   >
                     Logout
                   </Button>
@@ -144,9 +140,10 @@ const RoleBasedNavigation = ({ user }) => {
           </div>
         </div>
       </nav>
+
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[1010] md:hidden">
-          <div 
+          <div
             className="absolute inset-0 bg-background"
             onClick={() => setIsMobileMenuOpen(false)}
           />
@@ -173,9 +170,7 @@ const RoleBasedNavigation = ({ user }) => {
               {user && (
                 <div className="pt-4 mt-4 border-t border-border">
                   <div className="px-4 py-3 mb-2">
-                    <p className="text-sm font-medium text-foreground">
-                      {user?.name || 'User'}
-                    </p>
+                    <p className="text-sm font-medium text-foreground">{fullName}</p>
                     <p className="text-xs text-muted-foreground capitalize font-caption">
                       {user?.role}
                     </p>
@@ -185,7 +180,7 @@ const RoleBasedNavigation = ({ user }) => {
                     fullWidth
                     iconName="LogOut"
                     iconPosition="left"
-                    onClick={() => handleNavigation('/login')}
+                    onClick={handleLogout}
                   >
                     Logout
                   </Button>

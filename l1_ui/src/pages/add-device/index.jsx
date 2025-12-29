@@ -10,17 +10,16 @@ import DeviceInfoForm from './components/DeviceInfoForm';
 import DevicePhotoUpload from './components/DevicePhotoUpload';
 import RegistrationSuccessModal from './components/RegistrationSuccessModal';
 import { registerDevice } from '../../services/deviceService';
+import { getUser } from '../../utils/tokenUtils';
+
 
 
 const AddDevice = () => {
-  const navigate = useNavigate();
-  const [user] = useState({
-    id: 'STU001',
-    name: 'Alex Johnson',
-    email: 'alex.johnson@university.edu',
-    role: 'student',
-    studentId: 'STU2024001'
-  });
+const navigate = useNavigate();
+
+const user = getUser(); // make sure this contains backend _id
+const ownerId = user?._id; // backend expects _id
+
 
   const [formData, setFormData] = useState({
     brand: '',
@@ -120,15 +119,17 @@ const AddDevice = () => {
 
   try {
     const devicePayload = {
-      brand: formData.brand,
-      deviceType: formData.deviceType,
-      model: formData.model,
-      serialNumber: formData.serialNumber,
-      purchaseDate: formData.purchaseDate,
-      warrantyExpiry: formData.warrantyExpiry,
-      description: formData.description,
-      ownerId: user.id
-    };
+    brand: formData.brand,
+    deviceType: formData.deviceType, // this should be device_type_id
+    model: formData.model,
+    serialNumber: formData.serialNumber,
+    purchaseDate: formData.purchaseDate,
+    warrantyExpiry: formData.warrantyExpiry,
+    description: formData.description,
+    ownerId: ownerId,
+    color: formData.color || 'Black'
+};
+
 
     const savedDevice = await registerDevice(devicePayload, photos);
 

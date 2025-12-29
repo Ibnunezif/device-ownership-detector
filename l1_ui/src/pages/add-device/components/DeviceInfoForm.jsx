@@ -54,6 +54,7 @@ const DeviceInfoForm = ({ formData, errors, onChange }) => {
           error={errors?.deviceType}
         />
       </div>
+
       <Input
         label="Device Model"
         type="text"
@@ -64,16 +65,28 @@ const DeviceInfoForm = ({ formData, errors, onChange }) => {
         error={errors?.model}
         description="Enter the exact model name or number"
       />
+
       <Input
         label="Serial Number"
         type="text"
-        placeholder="e.g., C02XG0FDH7JY"
+        placeholder="e.g., SN-S26-2025-0001"
         required
         value={formData?.serialNumber}
         onChange={(e) => handleInputChange('serialNumber', e?.target?.value)}
         error={errors?.serialNumber}
         description="Usually found on the device label or in settings"
       />
+
+      <Input
+        label="Color"
+        type="text"
+        placeholder="e.g., Black, White, Silver"
+        value={formData?.color}
+        onChange={(e) => handleInputChange('color', e?.target?.value)}
+        error={errors?.color}
+        description="Optional: Device color for identification"
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
         <Input
           label="Purchase Date"
@@ -93,6 +106,7 @@ const DeviceInfoForm = ({ formData, errors, onChange }) => {
           description="Optional: For warranty management"
         />
       </div>
+
       <Input
         label="Additional Description"
         type="text"
