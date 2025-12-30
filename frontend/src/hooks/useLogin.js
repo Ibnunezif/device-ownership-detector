@@ -1,33 +1,56 @@
-import { useState } from "react";
-import { useAuthContext } from "./useAuthContext";
+import { useState } from 'react';
+import { useAuthContext } from './useAuthContext';
+import { useNotification } from '../context/NotificationContext';
+
 
 export const useLogin = () => {
-    const [isLoading,setIsLoading] = useState(null);
-    const [error,setError] = useState("")
-    const {dispatch} = useAuthContext()
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { dispatch } = useAuthContext();
+  const {showNotification} = useNotification();
 
-    const  login = async (email,password)=>{
-        setIsLoading(true)
-        setError(null)
-        const response = await fetch("https://workout-backend-hzgl.onrender.com/api/user/login",{
-            headers:{"Content-Type":"application/json"},
-            method:"POST",
-            body : JSON.stringify({email,password})
-        });
+  const login = async (email, password) => {
+    setIsLoading(true);
+    setError(null);
 
-        const json = await response.json()
-
-        if (!response.ok){
-            setError(json.error)
-            setIsLoading(false)
+    try {
+      const response = await fetch(
+        'https://pc-ownership-backend-api.onrender.com/api/user/login',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
         }
-        if (response.ok){
-            dispatch({type:"LOGIN",payload:json})
-            localStorage.setItem("user",JSON.stringify(json))
-            setIsLoading(false)
-            setError(null)
+      );
+
+
+      const json = await response.json();
+
+
+      if (!response.ok) {
+        if (json.errors) {
+          showNotification(json.message, 'error');
+          setError(json.errors);
         }
+        setIsLoading(false);
+        return;
+      }
+
+      // Success: store user and token separately
+      const { user, token } = json.data;
+
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', token);
+
+      // Update auth context
+      dispatch({ type: 'LOGIN', payload: { ...user, token } });
+      showNotification(json.message, 'success');
+      setIsLoading(false);
+    } catch (err) {
+      showNotification("Something went wrong", 'error');
+      setIsLoading(false);
     }
-    return {login,isLoading,error}
-}
- 
+  };
+
+  return { login, isLoading, error };
+};
