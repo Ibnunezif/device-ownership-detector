@@ -35,6 +35,6 @@ deviceTypeRouter.delete(
 deviceTypeRouter.get("/:id",requireAuth, getDeviceType);
 
 //get all device types
-deviceTypeRouter.get("/",requireAuth,requireRole("security_chief","admin"),getAllDeviceTypes);
+deviceTypeRouter.get("/",requireAuth,getAllDeviceTypes);
 
 export default deviceTypeRouter;
