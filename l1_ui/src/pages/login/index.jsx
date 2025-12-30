@@ -22,11 +22,13 @@ const Login = () => {
   }, []);
 
   const redirectBasedOnRole = (role) => {
+    console.log(role);
     switch (role) {
+      
       case 'STUDENT':
         navigate('/student-dashboard', { replace: true });
         break;
-      case 'SECURITY':
+      case 'SECURITY_STAFF':
         navigate('/security-scan', { replace: true });
         break;
       case 'ADMIN':

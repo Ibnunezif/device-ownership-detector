@@ -9,6 +9,8 @@ import DeviceTable from './components/DeviceTable';
 import FilterControls from './components/FilterControls';
 import BulkActionBar from './components/BulkActionBar';
 import Button from '../../components/ui/Button';
+import { getDevices } from '../../services/deviceService';
+
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -28,135 +30,33 @@ const AdminDashboard = () => {
   { label: 'Dashboard', path: '/admin-dashboard', icon: 'LayoutDashboard' }];
 
 
-  const mockDevices = [
-  {
-    id: 'DEV001',
-    ownerName: 'Sarah Johnson',
-    ownerEmail: 'sarah.johnson@university.edu',
-    ownerAvatar: "https://img.rocket.new/generatedImages/rocket_gen_img_1d99ce68c-1763293773878.png",
-    ownerAvatarAlt: 'Professional headshot of young woman with brown hair wearing blue blazer smiling at camera',
-    ownerType: 'student',
-    brand: 'Dell',
-    serialNumber: 'DL-2024-XPS-8901',
-    deviceImage: "https://images.unsplash.com/photo-1595859318210-4d8019c7d5d5",
-    deviceImageAlt: 'Silver Dell XPS laptop with black keyboard on white desk surface',
-    status: 'ACTIVE',
-    lastScan: '12/26/2025 3:45 PM',
-    lastScanLocation: 'Library - Floor 2',
-    registeredDate: '09/15/2025'
-  },
-  {
-    id: 'DEV002',
-    ownerName: 'Michael Chen',
-    ownerEmail: 'michael.chen@university.edu',
-    ownerAvatar: "https://img.rocket.new/generatedImages/rocket_gen_img_1bd15b436-1763300581767.png",
-    ownerAvatarAlt: 'Professional headshot of Asian man with short black hair wearing gray suit and glasses',
-    ownerType: 'student',
-    brand: 'HP',
-    serialNumber: 'HP-2024-ENVY-4567',
-    deviceImage: "https://images.unsplash.com/photo-1682019654168-f1fe9968a50d",
-    deviceImageAlt: 'Black HP Envy laptop with silver trim open on wooden desk',
-    status: 'STOLEN',
-    lastScan: '12/20/2025 10:30 AM',
-    lastScanLocation: 'Main Gate - Exit',
-    registeredDate: '09/10/2025'
-  },
-  {
-    id: 'DEV003',
-    ownerName: 'Emily Rodriguez',
-    ownerEmail: 'emily.rodriguez@university.edu',
-    ownerAvatar: "https://img.rocket.new/generatedImages/rocket_gen_img_162a57531-1763296100992.png",
-    ownerAvatarAlt: 'Professional headshot of Hispanic woman with long dark hair wearing white blouse',
-    ownerType: 'faculty',
-    brand: 'Lenovo',
-    serialNumber: 'LN-2024-THINK-2345',
-    deviceImage: "https://images.unsplash.com/photo-1497171090531-fa6297066879",
-    deviceImageAlt: 'Black Lenovo ThinkPad laptop with red trackpoint on office desk',
-    status: 'ACTIVE',
-    lastScan: '12/27/2025 9:15 AM',
-    lastScanLocation: 'Computer Lab - Building A',
-    registeredDate: '08/25/2025'
-  },
-  {
-    id: 'DEV004',
-    ownerName: 'James Wilson',
-    ownerEmail: 'james.wilson@university.edu',
-    ownerAvatar: "https://img.rocket.new/generatedImages/rocket_gen_img_1a184de25-1763292715446.png",
-    ownerAvatarAlt: 'Professional headshot of African American man with short hair wearing navy suit',
-    ownerType: 'student',
-    brand: 'Apple',
-    serialNumber: 'AP-2024-MBPR-6789',
-    deviceImage: "https://images.unsplash.com/photo-1599647058468-cba74d8e3f35",
-    deviceImageAlt: 'Silver MacBook Pro with glowing Apple logo on dark background',
-    status: 'BLOCKED',
-    lastScan: '12/25/2025 2:20 PM',
-    lastScanLocation: 'Cafeteria - Main Building',
-    registeredDate: '09/05/2025'
-  },
-  {
-    id: 'DEV005',
-    ownerName: 'Sophia Martinez',
-    ownerEmail: 'sophia.martinez@university.edu',
-    ownerAvatar: "https://img.rocket.new/generatedImages/rocket_gen_img_1c56710a9-1763300346689.png",
-    ownerAvatarAlt: 'Professional headshot of young woman with curly brown hair wearing green sweater',
-    ownerType: 'student',
-    brand: 'Asus',
-    serialNumber: 'AS-2024-VIVO-3456',
-    deviceImage: "https://images.unsplash.com/photo-1612499810017-b70bf0de17b9",
-    deviceImageAlt: 'Gray Asus VivoBook laptop with colorful screen display on white surface',
-    status: 'ACTIVE',
-    lastScan: '12/27/2025 11:00 AM',
-    lastScanLocation: 'Student Center - Lounge',
-    registeredDate: '09/20/2025'
-  },
-  {
-    id: 'DEV006',
-    ownerName: 'David Thompson',
-    ownerEmail: 'david.thompson@university.edu',
-    ownerAvatar: "https://img.rocket.new/generatedImages/rocket_gen_img_1c0329d19-1763292144023.png",
-    ownerAvatarAlt: 'Professional headshot of Caucasian man with blonde hair wearing checkered shirt',
-    ownerType: 'staff',
-    brand: 'Acer',
-    serialNumber: 'AC-2024-ASPIRE-7890',
-    deviceImage: "https://images.unsplash.com/photo-1645454516446-3d1f16fe95e5",
-    deviceImageAlt: 'Black Acer Aspire laptop with blue backlit keyboard on dark desk',
-    status: 'ACTIVE',
-    lastScan: '12/26/2025 4:30 PM',
-    lastScanLocation: 'Administration Office',
-    registeredDate: '08/30/2025'
-  },
-  {
-    id: 'DEV007',
-    ownerName: 'Olivia Brown',
-    ownerEmail: 'olivia.brown@university.edu',
-    ownerAvatar: "https://img.rocket.new/generatedImages/rocket_gen_img_134763617-1763296028962.png",
-    ownerAvatarAlt: 'Professional headshot of woman with red hair wearing black turtleneck',
-    ownerType: 'student',
-    brand: 'Dell',
-    serialNumber: 'DL-2024-INSP-1234',
-    deviceImage: "https://images.unsplash.com/photo-1682426526537-9c80bcd1fd8b",
-    deviceImageAlt: 'Silver Dell Inspiron laptop with touchscreen display on modern desk',
-    status: 'STOLEN',
-    lastScan: '12/22/2025 1:15 PM',
-    lastScanLocation: 'Parking Lot - Zone B',
-    registeredDate: '09/12/2025'
-  },
-  {
-    id: 'DEV008',
-    ownerName: 'Ethan Davis',
-    ownerEmail: 'ethan.davis@university.edu',
-    ownerAvatar: "https://img.rocket.new/generatedImages/rocket_gen_img_13b6f8537-1763295903462.png",
-    ownerAvatarAlt: 'Professional headshot of young man with brown hair wearing casual blue shirt',
-    ownerType: 'student',
-    brand: 'HP',
-    serialNumber: 'HP-2024-PAVIL-5678',
-    deviceImage: "https://images.unsplash.com/photo-1691973171931-b095945dc8e8",
-    deviceImageAlt: 'Silver HP Pavilion laptop with colorful display on wooden table',
-    status: 'ACTIVE',
-    lastScan: '12/27/2025 8:45 AM',
-    lastScanLocation: 'Lecture Hall - Room 301',
-    registeredDate: '09/18/2025'
-  }];
+const [devices, setDevices] = useState([]);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState('');
+
+const mapBackendDeviceToUI = (device) => ({
+  id: device.id,
+
+  ownerName: device.owner?.name || 'Unknown',
+  ownerEmail: device.owner?.email || 'N/A',
+  ownerAvatar: device.owner?.image || null,
+  ownerAvatarAlt: device.owner?.name || 'Owner avatar',
+
+  ownerType: device.owner?.department ? 'student' : 'staff',
+
+  brand: device.brand,
+  serialNumber: device.serial_number,
+
+  deviceImage: device.device_photo || null,
+  deviceImageAlt: device.brand,
+
+  status: device.status.toUpperCase(),
+
+  lastScan: '—',
+  lastScanLocation: '—',
+
+  registeredDate: new Date(device.createdAt).toLocaleDateString()
+});
 
 
   const metrics = [
@@ -198,23 +98,48 @@ const AdminDashboard = () => {
   }];
 
 
-  useEffect(() => {
-    const stolenDevices = mockDevices?.filter((d) => d?.status === 'STOLEN');
-    if (stolenDevices?.length > 0) {
-      setAlerts([
-      {
-        id: 'alert-1',
-        type: 'error',
-        title: 'Stolen Device Alert',
-        message: `${stolenDevices?.length} stolen ${stolenDevices?.length === 1 ? 'device' : 'devices'} detected. Immediate action required.`,
-        action: {
-          label: 'View Stolen Devices',
-          onClick: () => navigate('/stolen-devices')
-        }
-      }]
-      );
+useEffect(() => {
+  const fetchDevices = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      const { devices } = await getDevices({
+        page: 1,
+        limit: 10
+      });
+
+      const mappedDevices = devices.map(mapBackendDeviceToUI);
+      setDevices(mappedDevices);
+
+      const stolenDevices = mappedDevices.filter(d => d.status === 'STOLEN');
+      if (stolenDevices.length > 0) {
+        setAlerts([
+          {
+            id: 'alert-1',
+            type: 'error',
+            title: 'Stolen Device Alert',
+            message: `${stolenDevices.length} stolen ${
+              stolenDevices.length === 1 ? 'device' : 'devices'
+            } detected. Immediate action required.`,
+            action: {
+              label: 'View Stolen Devices',
+              onClick: () => navigate('/stolen-devices')
+            }
+          }
+        ]);
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load devices');
+    } finally {
+      setLoading(false);
     }
-  }, [navigate]);
+  };
+
+  fetchDevices();
+}, [navigate]);
+
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -231,7 +156,7 @@ const AdminDashboard = () => {
     });
   };
 
-  const filteredDevices = mockDevices?.filter((device) => {
+  const filteredDevices = devices?.filter((device) => {
     if (filters?.search) {
       const searchLower = filters?.search?.toLowerCase();
       const matchesSearch =
@@ -283,7 +208,7 @@ const AdminDashboard = () => {
   localStorage.removeItem('rememberMe');
 
   // Optional: clear everything
-  // localStorage.clear();
+  localStorage.clear();
 
   navigate('/login', { replace: true });
 };
@@ -343,6 +268,18 @@ const AdminDashboard = () => {
 
 
           <div className="mb-20 lg:mb-6">
+            {loading && (
+  <p className="text-center py-6 text-muted-foreground">
+    Loading devices...
+  </p>
+)}
+
+{error && (
+  <p className="text-center py-6 text-error">
+    {error}
+  </p>
+)}
+
             <DeviceTable
               devices={filteredDevices}
               onDeviceClick={handleDeviceClick}

@@ -8,12 +8,8 @@ import ScanResult from './components/ScanResult';
 import ScanHistory from './components/ScanHistory';
 
 const SecurityScan = () => {
-  const [user] = useState({
-    id: 'SEC001',
-    name: 'Officer James Wilson',
-    email: 'james.wilson@security.edu',
-    role: 'security'
-  });
+ const storedUser = JSON.parse(localStorage.getItem('user'));
+ const [user, setUser] = useState(storedUser);
 
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
@@ -107,7 +103,7 @@ const SecurityScan = () => {
   }, []);
 
   return (
-    <AuthenticationGuard user={user} requiredRoles={['security', 'admin']}>
+    <AuthenticationGuard requiredRoles={['SECURITY_STAFF']}>
       <div className="min-h-screen bg-background">
         <RoleBasedNavigation user={user} />
         
