@@ -142,6 +142,7 @@ const DeviceTable = ({ devices, onDeviceClick, onBulkAction, selectedDevices, on
                 </td>
                 <td className="px-4 py-3">
                   <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full caption font-semibold ${getStatusColor(device?.status)}`}>
+    
                     <Icon name={device?.status === 'ACTIVE' ? 'CheckCircle' : device?.status === 'STOLEN' ? 'AlertTriangle' : 'Ban'} size={14} />
                     {device?.status}
                   </span>
