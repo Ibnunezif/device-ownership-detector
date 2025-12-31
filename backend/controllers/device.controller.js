@@ -279,6 +279,90 @@ const getAllDevices = async (req, res) => {
   }
 };
 
+// GET /api/my-devices
+const getMyDevices = async (req, res) => {
+  try {
+    // Require logged-in user
+    const userId = req.user?._id || req.user?.id;
+    if (!userId) {
+      return handleError(res, 401, "Unauthorized – user not logged in");
+    }
+
+    // Pagination
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.max(parseInt(req.query.limit) || 10, 1);
+    const skip = (page - 1) * limit;
+
+    // Filters
+    const { status, model, brand, serial_number, search } = req.query;
+
+    const filter = { user_id: userId }; // ← KEY LINE
+
+    if (status) filter.status = status;
+    if (model) filter.model = new RegExp(model, "i");
+    if (brand) filter.brand = new RegExp(brand, "i");
+    if (serial_number) filter.serial_number = serial_number;
+
+    if (search) {
+      filter.$or = [
+        { model: new RegExp(search, "i") },
+        { brand: new RegExp(search, "i") },
+        { serial_number: new RegExp(search, "i") },
+      ];
+    }
+
+    // Query
+    const devices = await Device.find(filter)
+      .populate({
+        path: "user_id",
+        select:
+          "first_name last_name email department university_id profile_picture",
+      })
+      .populate({
+        path: "device_type_id",
+        select: "name",
+      })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Count for pagination
+    const total = await Device.countDocuments(filter);
+
+    return handleSuccess(res, 200, "My devices fetched successfully", {
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+      devices: devices.map((device) => ({
+        id: device._id,
+        brand: device.brand,
+        model: device.model,
+        serial_number: device.serial_number,
+        status: device.status,
+        barcode: device.barcode_data || null,
+        device_photo: device.device_photo || null,
+        owner: device.user_id
+          ? {
+              id: device.user_id._id,
+              name: `${device.user_id.first_name} ${device.user_id.last_name}`,
+              email: device.user_id.email,
+              department: device.user_id.department,
+              university_id: device.user_id.university_id,
+              image: device.user_id.profile_picture || null,
+            }
+          : null,
+        device_type: device.device_type_id?.name || null,
+        createdAt: device.createdAt,
+      })),
+    });
+  } catch (error) {
+    console.error("Get my devices error:", error);
+    return handleError(res, 500, "Failed to fetch devices");
+  }
+};
 
 
 
@@ -358,4 +442,4 @@ const getDataForPDF = async (req, res) => {
 
 
 
-export {registerDevice,deviceUpdate,getAllDevices,deleteDevice,getDataForPDF};
+export {registerDevice,deviceUpdate,getAllDevices,deleteDevice,getDataForPDF,getMyDevices};
