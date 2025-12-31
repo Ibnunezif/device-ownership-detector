@@ -48,7 +48,7 @@ export const getDevices = async ({
       search
     },
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTRiOWNjOTNlMGQ0MTU5MjdmMjJlY2IiLCJpYXQiOjE3NjcyMTI1OTUsImV4cCI6MTc2NzQ3MTc5NX0.jwBE4_sj5kOsdA7QRMKcVkwC_bTQt9WLqeJ0PzQgq6g`
     }
   });
 

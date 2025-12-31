@@ -10,6 +10,7 @@ import FilterControls from './components/FilterControls';
 import BulkActionBar from './components/BulkActionBar';
 import Button from '../../components/ui/Button';
 import { getDevices } from '../../services/deviceService';
+import { getDashboardMetrics } from '../../services/metricsService';
 
 
 const AdminDashboard = () => {
@@ -33,6 +34,9 @@ const AdminDashboard = () => {
 const [devices, setDevices] = useState([]);
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState('');
+const [metrics, setMetrics] = useState([]);
+const [metricsLoading, setMetricsLoading] = useState(false);
+
 
 const mapBackendDeviceToUI = (device) => ({
   id: device.id,
@@ -58,47 +62,97 @@ const mapBackendDeviceToUI = (device) => ({
   registeredDate: new Date(device.createdAt).toLocaleDateString()
 });
 
-
-  const metrics = [
+const mapMetricsToCards = (metric) => [
   {
     title: 'Total Devices',
-    value: '1,247',
+    value: metric.totalDevices,
     trend: 'up',
-    trendValue: '+12.5%',
-    description: 'vs last month',
-    icon: 'Laptop',
+    trendValue: '(--)%',
+    description: 'Registered devices in the system',
+    icon: 'Laptop',         // Laptop icon represents devices/computers
     iconColor: 'var(--color-primary)'
   },
   {
-    title: 'Active Devices',
-    value: '1,189',
+    title: 'Total Gates',
+    value: metric.totalGates,
     trend: 'up',
-    trendValue: '+8.3%',
-    description: 'currently active',
-    icon: 'CheckCircle',
+    trendValue: '(--)%',
+    description: 'Active access gates',
+    icon: 'LogIn',          // LogIn icon can represent gates/access points
     iconColor: 'var(--color-success)'
   },
   {
-    title: 'Stolen Alerts',
-    value: '23',
-    trend: 'down',
-    trendValue: '-15.2%',
-    description: 'vs last month',
-    icon: 'AlertTriangle',
-    iconColor: 'var(--color-error)'
+    title: 'Total Libraries',
+    value: metric.totalLibraries,
+    trend: 'up',
+    trendValue: '(--)%',
+    description: 'Active libraries',
+    icon: 'BookOpen',       // BookOpen icon represents libraries
+    iconColor: 'var(--color-secondary)'
   },
   {
-    title: 'Recent Scans',
-    value: '456',
+    title: 'Total Movements',
+    value: metric.totalMovements,
     trend: 'up',
-    trendValue: '+23.1%',
-    description: 'last 24 hours',
-    icon: 'Scan',
-    iconColor: 'var(--color-secondary)'
-  }];
+    trendValue: '(--)%',
+    description: 'Device movements in/out',
+    icon: 'Repeat',         // Repeat / Swap icon represents movements/transactions
+    iconColor: 'var(--color-accent)'
+  },
+  {
+    title: 'Students',
+    value: metric.roles?.students ?? 0,
+    trend: 'up',
+    trendValue: '(--)%',
+    description: 'Registered student users',
+    icon: 'User',           // Single user represents students
+    iconColor: 'var(--color-primary)'
+  },
+  {
+    title: 'Admins',
+    value: metric.roles?.admins ?? 0,
+    trend: 'up',
+    trendValue: '(--)%',
+    description: 'System administrators',
+    icon: 'Shield',         // Shield icon represents admin/security role
+    iconColor: 'var(--color-warning)'
+  },
+  {
+    title: 'Security Staff',
+    value: metric.roles?.securityStaff ?? 0,
+    trend: 'up',
+    trendValue: '(--)%',
+    description: 'Security personnel',
+    icon: 'Users',          // Users icon represents a team / staff
+    iconColor: 'var(--color-success)'
+  },
+  {
+    title: 'Security Chiefs',
+    value: metric.roles?.securityChiefs ?? 0,
+    trend: 'up',
+    trendValue: '(--)%',
+    description: 'Security chiefs / managers',
+    icon: 'Star',           // Star icon represents leadership or chief role
+    iconColor: 'var(--color-error)'
+  }
+];
+
+
+
+
 
 
 useEffect(() => {
+   const fetchMetrics = async () => {
+    try {
+      const metricData = await getDashboardMetrics(); // returns object
+      const mappedMetrics = mapMetricsToCards(metricData); // convert to array
+      setMetrics(mappedMetrics);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  fetchMetrics();
   const fetchDevices = async () => {
     try {
       setLoading(true);
@@ -255,6 +309,12 @@ useEffect(() => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+            {metricsLoading && (
+            <p className="text-center text-muted-foreground">
+              Loading dashboard metrics...
+            </p>
+          )}
+
             {metrics?.map((metric, index) =>
             <MetricCard key={index} {...metric} />
             )}
