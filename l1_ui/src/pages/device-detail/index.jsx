@@ -21,6 +21,7 @@ const DeviceDetail = () => {
   const deviceId = new URLSearchParams(location.search).get('id');
 
   useEffect(() => {
+    const forDefault=null;
      const mockDevice = {
     deviceId: "DEV-2024-8472",
     brand: "Dell",
