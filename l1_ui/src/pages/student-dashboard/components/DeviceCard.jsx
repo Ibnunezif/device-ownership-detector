@@ -37,8 +37,8 @@ const DeviceCard = ({ device, onViewDetails, onReportTheft }) => {
     <div className="bg-card rounded-lg shadow-elevation-md hover:shadow-elevation-lg transition-smooth overflow-hidden border border-border">
       <div className="relative h-48 md:h-56 lg:h-64 overflow-hidden bg-muted">
         <Image
-          src={device?.image}
-          alt={device?.imageAlt}
+          src={device?.deviceImage}
+          alt={device?.deviceImageAlt}
           className="w-full h-full object-cover"
         />
         <div className={`absolute top-3 right-3 ${statusConfig?.bgColor} ${statusConfig?.borderColor} border rounded-md px-3 py-1.5 flex items-center space-x-2`}>
@@ -50,7 +50,7 @@ const DeviceCard = ({ device, onViewDetails, onReportTheft }) => {
       </div>
       <div className="p-4 md:p-5 lg:p-6">
         <h3 className="text-lg md:text-xl font-semibold text-foreground mb-2 line-clamp-1">
-          {device?.name}
+          {device?.model}
         </h3>
         
         <div className="space-y-2 mb-4">

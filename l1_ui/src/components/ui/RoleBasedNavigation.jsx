@@ -44,6 +44,8 @@ const RoleBasedNavigation = ({ user }) => {
   const filteredNavItems = navigationItems?.filter(item =>
     item?.roles?.includes(user?.role || 'guest')
   );
+  console.log('RoleBasedNavigation user:', user);
+
 
   const fullName = user ? `${user.first_name} ${user.last_name}` : 'User';
 

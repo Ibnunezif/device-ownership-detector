@@ -4,7 +4,7 @@ export const registerDevice = async (devicePayload, photos) => {
   const formData = new FormData();
 
   formData.append('user_id', devicePayload.ownerId);
-  formData.append('device_type_id', '694b8e5d2783682beaef949d'); // must match backend ID
+  formData.append('device_type_id', devicePayload.deviceType); // must match backend ID
   formData.append('brand', devicePayload.brand);
   formData.append('model', devicePayload.model);
   formData.append('serial_number', devicePayload.serialNumber);

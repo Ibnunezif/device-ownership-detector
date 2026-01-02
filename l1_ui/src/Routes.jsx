@@ -13,6 +13,7 @@ import Register from './pages/register';
 import AdminDashboard from './pages/admin-dashboard';
 import LogsPage from './pages/logs';
 import DeviceDetail from './pages/device-detail';
+import DeviceDetailIndividual from './pages/device-detail-individual';
 import UnauthorizedAccess from './pages/unauthorized-access';
 import StolenDevicesPage from './pages/stolen-devices';
 
@@ -36,6 +37,7 @@ const Routes = () => {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/logs" element={<LogsPage />} />
         <Route path="/device-detail" element={<DeviceDetail />} />
+        <Route path="/device-detail-individual" element={<DeviceDetailIndividual />} />
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized-access" element={<UnauthorizedAccess />} />
         <Route path="/stolen-devices" element={<StolenDevicesPage />} />
