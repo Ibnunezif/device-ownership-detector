@@ -5,12 +5,17 @@ import Button from '../../../components/ui/Button';
 
 const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
   const videoRef = useRef(null);
-  const canvasRef = useRef(document.createElement('canvas'));
+  const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const scanningRef = useRef(false);
 
   const [hasCamera, setHasCamera] = useState(true);
   const [cameraError, setCameraError] = useState('');
+
+  // Create canvas once
+  if (!canvasRef.current) {
+    canvasRef.current = document.createElement('canvas');
+  }
 
   useEffect(() => {
     if (isScanning) {
@@ -19,13 +24,16 @@ const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
       stopCamera();
     }
 
-    return stopCamera;
+    return () => {
+      stopCamera();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isScanning]);
 
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }
+        video: { facingMode: { ideal: 'environment' } } // more flexible
       });
 
       if (videoRef.current) {
@@ -38,6 +46,7 @@ const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
       setHasCamera(true);
       setCameraError('');
     } catch (err) {
+      console.error('getUserMedia error:', err);
       setHasCamera(false);
       setCameraError('Camera access denied or not available.');
       setIsScanning(false);
@@ -61,6 +70,7 @@ const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
     if (!scanningRef.current || !videoRef.current) return;
 
     const video = videoRef.current;
+
     if (video.readyState !== video.HAVE_ENOUGH_DATA) {
       requestAnimationFrame(scanFrame);
       return;
@@ -68,12 +78,24 @@ const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      console.error('No 2D context on canvas');
+      return;
+    }
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const width = video.videoWidth;
+    const height = video.videoHeight;
 
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    if (!width || !height) {
+      requestAnimationFrame(scanFrame);
+      return;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(video, 0, 0, width, height);
+
+    const imageData = ctx.getImageData(0, 0, width, height);
     const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
 
     if (qrCode?.data) {
