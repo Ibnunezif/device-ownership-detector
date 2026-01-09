@@ -26,13 +26,20 @@ const DeviceCard = ({ device, onViewDetails, onReportTheft }) => {
         borderColor: 'border-warning/20',
         icon: 'Ban',
         label: 'Blocked'
-      }
+      },
+    PENDING: {
+        bgColor: 'bg-yellow-100',
+        textColor: 'text-yellow-800',
+        borderColor: 'border-yellow-300',
+        icon: 'Clock',
+        label: 'Pending'
+     }
+
     };
     return configs?.[status] || configs?.ACTIVE;
   };
 
-  const statusConfig = getStatusConfig(device?.status);
-
+  const statusConfig = getStatusConfig(device?.status?.toUpperCase());
   return (
     <div className="bg-card rounded-lg shadow-elevation-md hover:shadow-elevation-lg transition-smooth overflow-hidden border border-border">
       <div className="relative h-48 md:h-56 lg:h-64 overflow-hidden bg-muted">
@@ -85,7 +92,7 @@ const DeviceCard = ({ device, onViewDetails, onReportTheft }) => {
             View Details
           </Button>
           
-          {device?.status === 'ACTIVE' && (
+          {device?.status?.toUpperCase() === 'ACTIVE' && (
             <Button
               variant="destructive"
               size="sm"
