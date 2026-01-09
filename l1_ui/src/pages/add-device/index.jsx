@@ -11,6 +11,8 @@ import DevicePhotoUpload from './components/DevicePhotoUpload';
 import RegistrationSuccessModal from './components/RegistrationSuccessModal';
 import { registerDevice } from '../../services/deviceService';
 import { getUser } from '../../utils/tokenUtils';
+import { getDeviceTypes } from '../../services/deviceTypeService';
+
 
 
 
@@ -38,6 +40,10 @@ const ownerId = user?._id; // backend expects _id
   const [registeredDevice, setRegisteredDevice] = useState(null);
   const [submitError, setSubmitError] = useState('');
 
+  const [deviceTypes, setDeviceTypes] = useState([]);
+  const [loadingDeviceTypes, setLoadingDeviceTypes] = useState(true);
+
+
   const breadcrumbItems = [
     { label: 'Dashboard', path: '/student-dashboard' },
     { label: 'Add Device', path: '/add-device' }
@@ -46,6 +52,27 @@ const ownerId = user?._id; // backend expects _id
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+  const fetchDeviceTypes = async () => {
+    try {
+      const types = await getDeviceTypes();
+      setDeviceTypes(
+        types.map(type => ({
+          value: type.id,   // IMPORTANT: backend ID
+          label: type.name
+        }))
+      );
+    } catch (error) {
+      console.error('Failed to load device types', error);
+    } finally {
+      setLoadingDeviceTypes(false);
+    }
+  };
+
+  fetchDeviceTypes();
+}, []);
+
 
   const handleFormChange = (field, value) => {
     setFormData(prev => ({
@@ -131,7 +158,10 @@ const ownerId = user?._id; // backend expects _id
 };
 
 
-    const savedDevice = await registerDevice(devicePayload, photos);
+      const response = await registerDevice(devicePayload, photos);
+
+      // Extract the actual device object
+      const savedDevice = response?.data?.device;
 
     setRegisteredDevice(savedDevice);
     setShowSuccessModal(true);
@@ -212,7 +242,10 @@ const ownerId = user?._id; // backend expects _id
                   formData={formData}
                   errors={errors}
                   onChange={handleFormChange}
+                  deviceTypes={deviceTypes}
+                  loadingDeviceTypes={loadingDeviceTypes}
                 />
+
               </div>
 
               <div className="bg-card rounded-lg shadow-elevation-md p-4 md:p-6 lg:p-8 space-y-6">

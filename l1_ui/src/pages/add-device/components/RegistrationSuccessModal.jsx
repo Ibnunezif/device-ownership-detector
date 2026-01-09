@@ -45,14 +45,14 @@ const RegistrationSuccessModal = ({ isOpen, deviceData, onClose }) => {
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground font-caption">Serial Number:</span>
             <span className="text-sm font-medium text-foreground font-mono">
-              {deviceData?.serialNumber}
+              {deviceData?.serial_number}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground font-caption">Status:</span>
             <span className="inline-flex items-center space-x-1 px-2 py-1 bg-success/10 text-success rounded text-xs font-medium">
               <Icon name="Shield" size={12} />
-              <span>ACTIVE</span>
+              <span>{deviceData?.status}</span>
             </span>
           </div>
         </div>

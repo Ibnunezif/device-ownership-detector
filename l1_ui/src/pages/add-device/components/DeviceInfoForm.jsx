@@ -2,7 +2,14 @@ import React from 'react';
 import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 
-const DeviceInfoForm = ({ formData, errors, onChange }) => {
+const DeviceInfoForm = ({
+  formData,
+  errors,
+  onChange,
+  deviceTypes,
+  loadingDeviceTypes
+}) => {
+
   const deviceBrands = [
     { value: 'apple', label: 'Apple' },
     { value: 'dell', label: 'Dell' },
@@ -14,16 +21,6 @@ const DeviceInfoForm = ({ formData, errors, onChange }) => {
     { value: 'samsung', label: 'Samsung' },
     { value: 'lg', label: 'LG' },
     { value: 'other', label: 'Other' }
-  ];
-
-  const deviceTypes = [
-    { value: 'laptop', label: 'Laptop' },
-    { value: 'desktop', label: 'Desktop Computer' },
-    { value: 'tablet', label: 'Tablet' },
-    { value: 'smartphone', label: 'Smartphone' },
-    { value: 'smartwatch', label: 'Smartwatch' },
-    { value: 'camera', label: 'Camera' },
-    { value: 'other', label: 'Other Electronic Device' }
   ];
 
   const handleInputChange = (field, value) => {
@@ -46,13 +43,15 @@ const DeviceInfoForm = ({ formData, errors, onChange }) => {
 
         <Select
           label="Device Type"
-          placeholder="Select device type"
+          placeholder={loadingDeviceTypes ? 'Loading device types...' : 'Select device type'}
           required
           options={deviceTypes}
           value={formData?.deviceType}
-          onChange={(value) => handleInputChange('deviceType', value)}
+          onChange={(value) => onChange('deviceType', value)}
           error={errors?.deviceType}
+          disabled={loadingDeviceTypes}
         />
+
       </div>
 
       <Input
@@ -86,27 +85,6 @@ const DeviceInfoForm = ({ formData, errors, onChange }) => {
         error={errors?.color}
         description="Optional: Device color for identification"
       />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-        <Input
-          label="Purchase Date"
-          type="date"
-          value={formData?.purchaseDate}
-          onChange={(e) => handleInputChange('purchaseDate', e?.target?.value)}
-          error={errors?.purchaseDate}
-          description="Optional: Helps with warranty tracking"
-        />
-
-        <Input
-          label="Warranty Expiry"
-          type="date"
-          value={formData?.warrantyExpiry}
-          onChange={(e) => handleInputChange('warrantyExpiry', e?.target?.value)}
-          error={errors?.warrantyExpiry}
-          description="Optional: For warranty management"
-        />
-      </div>
-
       <Input
         label="Additional Description"
         type="text"
