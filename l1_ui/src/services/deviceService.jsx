@@ -10,8 +10,13 @@ export const registerDevice = async (devicePayload, photos) => {
   formData.append('serial_number', devicePayload.serialNumber);
   formData.append('color', devicePayload.color || 'Black');
   photos.forEach((photo) => {
+  if (photo instanceof File) {
+    formData.append('device_photo', photo);
+  } else if (photo.file instanceof File) {
     formData.append('device_photo', photo.file);
-  });
+  }
+   });
+
  const token = localStorage.getItem('authToken');
   const response = await axios.post(
     'https://pc-ownership-backend-api.onrender.com/api/devices/register',
