@@ -11,7 +11,7 @@ import DevicePhotoUpload from './components/DevicePhotoUpload';
 import RegistrationSuccessModal from './components/RegistrationSuccessModal';
 import { registerDevice } from '../../services/deviceService';
 import { getUser } from '../../utils/tokenUtils';
-import { getDeviceTypes } from '../../services/deviceTypeService';
+import { getDeviceTypes } from '../../services/deviceService';
 
 
 

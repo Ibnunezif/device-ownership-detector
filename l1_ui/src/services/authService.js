@@ -1,3 +1,4 @@
+// src/services/authService.js
 import { registerApi, loginApi } from '../api/authApi';
 
 /**
@@ -6,7 +7,6 @@ import { registerApi, loginApi } from '../api/authApi';
  * @returns {Promise<Object>} - Response data from API
  */
 export const registerUser = async (formData) => {
-  // Map frontend form data to backend payload
   const payload = {
     first_name: formData.first_name.trim(),
     last_name: formData.last_name.trim(),
@@ -14,15 +14,14 @@ export const registerUser = async (formData) => {
     university_id: formData.university_id.trim(),
     department: formData.department.trim(),
     batch: formData.batch.trim(),
-    role: formData.role.toLowerCase(), // ensure lowercase role
+    role: formData.role.toLowerCase(),
     email: formData.email.trim(),
-    password: formData.password
+    password: formData.password,
   };
 
   const response = await registerApi(payload);
   return response.data;
 };
-
 
 /**
  * Login user
@@ -30,21 +29,17 @@ export const registerUser = async (formData) => {
 export const loginUser = async (formData) => {
   const response = await loginApi({
     email: formData.email,
-    password: formData.password
+    password: formData.password,
   });
 
-  // ✅ Correct extraction based on backend response
+  // backend: { data: { token, user } }
   const { token, user } = response.data.data;
 
-  // ✅ Store auth data
   localStorage.setItem('authToken', token);
   localStorage.setItem('user', JSON.stringify(user));
 
-  // ✅ Return normalized object to components
   return { token, user };
 };
-
-
 
 /**
  * Logout user

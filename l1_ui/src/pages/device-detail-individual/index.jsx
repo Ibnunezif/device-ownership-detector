@@ -10,7 +10,7 @@ import StatusManagementPanel from './components/StatusManagementPanel';
 import PhotoGallery from './components/PhotoGallery';
 import QRCodeGenerator from './components/QRCodeGenerator';
 import OwnerCommunication from './components/OwnerCommunication';
-import { getDeviceByIndividual } from '../../services/getDevicesByIndividual';
+import { getDeviceByIndividual } from '../../services/deviceService';
 
 const DeviceDetailIndividual = () => {
   const navigate = useNavigate();

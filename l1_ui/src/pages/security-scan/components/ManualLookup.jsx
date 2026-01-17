@@ -3,26 +3,24 @@ import Icon from '../../../components/AppIcon';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 
-const ManualLookup = ({ onLookupSuccess }) => {
-  const [serialNumber, setSerialNumber] = useState('');
+const ManualLookup = ({ onLookupSuccess, loading }) => {
+  const [barcode, setBarcode] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
-  const handleLookup = () => {
-    if (!serialNumber?.trim()) {
-      return;
-    }
+  const handleLookup = async () => {
+    if (!barcode?.trim()) return;
 
     setIsSearching(true);
-    
-    setTimeout(() => {
-      onLookupSuccess(serialNumber?.trim());
+    try {
+      await onLookupSuccess(barcode.trim(), 'MANUAL');
+      setBarcode('');
+    } finally {
       setIsSearching(false);
-      setSerialNumber('');
-    }, 1000);
+    }
   };
 
   const handleKeyPress = (e) => {
-    if (e?.key === 'Enter' && serialNumber?.trim()) {
+    if (e?.key === 'Enter' && barcode?.trim()) {
       handleLookup();
     }
   };
@@ -38,19 +36,19 @@ const ManualLookup = ({ onLookupSuccess }) => {
             Manual Lookup
           </h2>
           <p className="text-xs md:text-sm text-muted-foreground font-caption">
-            Enter serial number for verification
+            Enter device barcode for verification
           </p>
         </div>
       </div>
       <div className="space-y-4">
         <Input
-          label="Device Serial Number"
+          label="Device Barcode"
           type="text"
-          placeholder="Enter serial number (e.g., SN123456789)"
-          value={serialNumber}
-          onChange={(e) => setSerialNumber(e?.target?.value?.toUpperCase())}
+          placeholder="Enter barcode (e.g., ugr/30030/14SN-S26-2025-000900)"
+          value={barcode}
+          onChange={(e) => setBarcode(e?.target?.value)}
           onKeyPress={handleKeyPress}
-          description="Enter the device serial number found on the device label"
+          description="Scan or type the barcode printed on the device tag"
         />
 
         <Button
@@ -58,11 +56,11 @@ const ManualLookup = ({ onLookupSuccess }) => {
           iconName="Search"
           iconPosition="left"
           onClick={handleLookup}
-          disabled={!serialNumber?.trim() || isSearching}
-          loading={isSearching}
+          disabled={!barcode?.trim() || isSearching || loading}
+          loading={isSearching || loading}
           fullWidth
         >
-          {isSearching ? 'Searching...' : 'Lookup Device'}
+          {isSearching || loading ? 'Verifying...' : 'Lookup Device'}
         </Button>
 
         <div className="bg-muted/50 rounded-md p-3 md:p-4">
@@ -70,10 +68,9 @@ const ManualLookup = ({ onLookupSuccess }) => {
             <Icon name="AlertCircle" size={18} className="text-accent flex-shrink-0 mt-0.5" />
             <div className="text-xs md:text-sm text-muted-foreground space-y-1">
               <p className="font-medium text-foreground">Manual Lookup Guidelines:</p>
-              <p>• Serial numbers are case-insensitive</p>
-              <p>• Remove spaces and special characters</p>
-              <p>• Verify serial number matches device label</p>
-              <p>• Use QR scanner for faster verification</p>
+              <p>• Use the full barcode printed on the device tag</p>
+              <p>• Remove extra spaces when typing manually</p>
+              <p>• Use QR scanner or barcode scanner when possible</p>
             </div>
           </div>
         </div>

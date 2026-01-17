@@ -10,7 +10,7 @@ import FilterControls from './components/FilterControls';
 import BulkActionBar from './components/BulkActionBar';
 import Button from '../../components/ui/Button';
 import { getDevices } from '../../services/deviceService';
-import { getDashboardMetrics } from '../../services/metricsService';
+import { getDashboardMetrics } from '../../api/dashboardApi';
 
 
 const AdminDashboard = () => {

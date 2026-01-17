@@ -1,9 +1,10 @@
-import apiClient from './apiClient';
+// src/api/authApi.js
+import httpClient from './httpClient';
 
 export const registerApi = (payload) => {
-  return apiClient.post('/user/register', payload);
+  return httpClient.post('/user/register', payload);
 };
 
 export const loginApi = (payload) => {
-  return apiClient.post('/user/login', payload);
+  return httpClient.post('/user/login', payload);
 };

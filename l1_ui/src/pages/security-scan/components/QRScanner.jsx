@@ -3,7 +3,7 @@ import jsQR from 'jsqr';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 
-const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
+const QRScanner = ({ onScanSuccess, isScanning, setIsScanning, loading }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -12,7 +12,6 @@ const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
   const [hasCamera, setHasCamera] = useState(true);
   const [cameraError, setCameraError] = useState('');
 
-  // Create canvas once
   if (!canvasRef.current) {
     canvasRef.current = document.createElement('canvas');
   }
@@ -33,7 +32,7 @@ const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: 'environment' } } // more flexible
+        video: { facingMode: { ideal: 'environment' } },
       });
 
       if (videoRef.current) {
@@ -57,7 +56,7 @@ const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
     scanningRef.current = false;
 
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
 
@@ -100,7 +99,8 @@ const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
 
     if (qrCode?.data) {
       scanningRef.current = false;
-      onScanSuccess(qrCode.data);
+      // qrCode.data should contain the barcode string
+      onScanSuccess(qrCode.data, 'CAMERA');
       setIsScanning(false);
       stopCamera();
       return;
@@ -110,9 +110,9 @@ const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
   };
 
   const handleManualScan = () => {
-    const mockSerial =
-      'SN' + Math.random().toString(36).substring(2, 12).toUpperCase();
-    onScanSuccess(mockSerial);
+    const mockBarcode =
+      'ugr/30030/14SN-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    onScanSuccess(mockBarcode, 'CAMERA');
     setIsScanning(false);
   };
 
@@ -125,7 +125,7 @@ const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
         <div>
           <h2 className="text-xl font-semibold">QR Code Scanner</h2>
           <p className="text-sm text-muted-foreground">
-            Scan device QR code for verification
+            Scan device barcode or QR code for verification
           </p>
         </div>
       </div>
@@ -157,28 +157,33 @@ const QRScanner = ({ onScanSuccess, isScanning, setIsScanning }) => {
       <div className="flex gap-3 mt-6">
         {isScanning ? (
           <>
-            <Button fullWidth onClick={handleManualScan}>
+            <Button fullWidth onClick={handleManualScan} disabled={loading}>
               Simulate Scan
             </Button>
             <Button
               variant="outline"
               fullWidth
               onClick={() => setIsScanning(false)}
+              disabled={loading}
             >
               Stop
             </Button>
           </>
         ) : (
-          <Button fullWidth onClick={() => setIsScanning(true)}>
-            Start Scanning
+          <Button
+            fullWidth
+            onClick={() => setIsScanning(true)}
+            disabled={loading}
+          >
+            {loading ? 'Processing...' : 'Start Scanning'}
           </Button>
         )}
       </div>
 
       <div className="bg-muted/50 rounded-md p-4 mt-6 text-sm text-muted-foreground">
         <p>• Ensure good lighting</p>
-        <p>• Keep QR code centered</p>
-        <p>• Manual scan available if QR is damaged</p>
+        <p>• Keep QR or barcode centered</p>
+        <p>• Use manual lookup if code is damaged</p>
       </div>
     </div>
   );

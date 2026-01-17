@@ -6,7 +6,7 @@ import Button from '../../../components/ui/Button';
 import { Checkbox } from '../../../components/ui/Checkbox';
 import Icon from '../../../components/AppIcon';
 import StatusIndicator from '../../../components/ui/StatusIndicator';
-import { registerUser } from '../../../services/authService';
+import { registerUser } from '../../../services/authService.js';
 
 const RegistrationForm = () => {
   const navigate = useNavigate();

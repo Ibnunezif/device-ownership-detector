@@ -4,7 +4,7 @@ import LoginForm from './components/LoginForm';
 import WelcomeSection from './components/WelcomeSection';
 import RegistrationPrompt from './components/RegistrationPrompt';
 import StatusIndicator from '../../components/ui/StatusIndicator';
-import { loginUser } from '../../services/authService';
+import { loginUser } from '../../services/authService.js';
 import { getUserRole } from '../../utils/tokenUtils';
 
 

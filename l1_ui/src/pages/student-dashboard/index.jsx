@@ -10,7 +10,7 @@ import DashboardStats from './components/DashboardStats';
 import SearchAndFilter from './components/SearchAndFilter';
 import EmptyState from './components/EmptyState';
 import ReportTheftModal from './components/ReportTheftModal';
-import { getDevices } from '../../services/mYdeviceService';
+import { getMyDevices } from '../../services/deviceService';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ const StudentDashboard = () => {
         setLoading(true);
         setError(null);
 
-        const response = await getDevices({ page: 1, limit: 10 });
+        const response = await getMyDevices({ page: 1, limit: 10 });
         const mapped = response.devices.map(mapBackendDeviceToUI);
 
         setDevices(mapped);
