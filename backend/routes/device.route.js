@@ -25,7 +25,7 @@ deviceRouter.patch(
   deviceUpdate,
 );
 
-deviceRouter.get("/", requireAuth, requireRole("security_chief","security_staff"), getAllDevices);
+deviceRouter.get("/", requireAuth, requireRole("security_chief","security_staff","admin"), getAllDevices);
 
 deviceRouter.get("/my-devices", requireAuth, getMyDevices);
 
