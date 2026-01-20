@@ -57,7 +57,7 @@ const registerDevice = async (req, res) => {
       return handleError(res, 400, "Device photo is required");
     }
 
-    const barcode_data = deviceOwner.university_id +user_id+serial_number;
+    const barcode_data = serial_number;
 
     // 5️⃣ Create device
     const device = await Device.create({
