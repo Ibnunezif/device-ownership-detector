@@ -19,7 +19,7 @@ deviceRouter.post(
 deviceRouter.patch(
   "/update/:id",
   requireAuth,
-  requireRole("security_chief"),
+  requireRole("security_chief","admin"),
   upload.single("device_photo"),
   multerErrorHandler,
   deviceUpdate,
@@ -29,9 +29,9 @@ deviceRouter.get("/", requireAuth, requireRole("security_chief","security_staff"
 
 deviceRouter.get("/my-devices", requireAuth, getMyDevices);
 
-deviceRouter.get('/data-for-pdf/:id', requireAuth, requireRole("security_chief"),getDataForPDF);
+deviceRouter.get('/data-for-pdf/:id', requireAuth, requireRole("security_chief","admin"),getDataForPDF);
 
-deviceRouter.delete("/:id", requireAuth, requireRole("security_chief"), deleteDevice,multerErrorHandler);
+deviceRouter.delete("/:id", requireAuth, requireRole("security_chief","admin"), deleteDevice,multerErrorHandler);
 
 
 
