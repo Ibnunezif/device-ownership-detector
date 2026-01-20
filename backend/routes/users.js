@@ -17,7 +17,7 @@ router.get("/me", requireAuth, getMe);
 router.patch(
   "/update/:id",
   requireAuth,
-  requireRole("security_chief"),
+  requireRole("security_chief","admin"),
   upload.single("profile_picture"),
   multerErrorHandler,
   updateUser
