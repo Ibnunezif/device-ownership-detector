@@ -104,23 +104,6 @@ const handleLogin = async (formData) => {
               />
 
               <RegistrationPrompt disabled={loading} />
-
-              <div className="mt-6 md:mt-8 p-4 bg-muted/30 rounded-md">
-                <p className="text-xs md:text-sm font-semibold text-foreground mb-2 font-caption">
-                  Demo Credentials:
-                </p>
-                <div className="space-y-2 text-xs md:text-sm text-muted-foreground font-mono">
-                  <div>
-                    <span className="font-semibold">Student:</span> student@college.edu / student123
-                  </div>
-                  <div>
-                    <span className="font-semibold">Security:</span> security@college.edu / security123
-                  </div>
-                  <div>
-                    <span className="font-semibold">Admin:</span> admin@college.edu / admin123
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

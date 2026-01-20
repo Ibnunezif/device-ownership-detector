@@ -9,7 +9,7 @@ import DeviceTable from './components/DeviceTable';
 import FilterControls from './components/FilterControls';
 import BulkActionBar from './components/BulkActionBar';
 import Button from '../../components/ui/Button';
-import { getDevices } from '../../services/deviceService';
+import { getDevices,markDeviceAsStolen, verifyDevice, updateDevice  } from '../../services/deviceService';
 import { getDashboardMetrics } from '../../api/dashboardApi';
 
 
@@ -25,6 +25,7 @@ const AdminDashboard = () => {
     dateFrom: '',
     dateTo: ''
   });
+
 
   const breadcrumbItems = [
   { label: 'Home', path: '/admin-dashboard', icon: 'Home' },
@@ -210,21 +211,24 @@ useEffect(() => {
     });
   };
 
-  const filteredDevices = devices?.filter((device) => {
-    if (filters?.search) {
-      const searchLower = filters?.search?.toLowerCase();
-      const matchesSearch =
+const filteredDevices = devices?.filter((device) => {
+  if (filters?.search) {
+    const searchLower = filters?.search.toLowerCase();
+    const matchesSearch =
       device?.ownerName?.toLowerCase()?.includes(searchLower) ||
       device?.ownerEmail?.toLowerCase()?.includes(searchLower) ||
       device?.serialNumber?.toLowerCase()?.includes(searchLower) ||
       device?.brand?.toLowerCase()?.includes(searchLower);
-      if (!matchesSearch) return false;
-    }
-    if (filters?.status !== 'all' && device?.status !== filters?.status) return false;
-    if (filters?.brand !== 'all' && device?.brand !== filters?.brand) return false;
-    if (filters?.ownerType !== 'all' && device?.ownerType !== filters?.ownerType) return false;
-    return true;
-  });
+    if (!matchesSearch) return false;
+  }
+
+  if (filters?.status !== 'all' && device?.status.toLowerCase() !== filters?.status.toLowerCase()) return false;
+  if (filters?.brand !== 'all' && device?.brand.toLowerCase() !== filters?.brand.toLowerCase()) return false;
+  if (filters?.ownerType !== 'all' && device?.ownerType.toLowerCase() !== filters?.ownerType.toLowerCase()) return false;
+
+  return true;
+});
+
 
   const handleDeviceClick = (deviceId) => {
     navigate(`/device-detail?id=${deviceId}`);

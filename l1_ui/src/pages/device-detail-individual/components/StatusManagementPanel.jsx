@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
@@ -11,37 +11,56 @@ const StatusManagementPanel = ({ currentStatus, onStatusUpdate }) => {
   const [errors, setErrors] = useState({});
 
   const statusOptions = [
-    { value: 'ACTIVE', label: 'Active', description: 'Device is in normal use' },
-    { value: 'STOLEN', label: 'Stolen', description: 'Device has been reported stolen' },
+    { value: 'ACTIVE',  label: 'Active',  description: 'Device is in normal use' },
+    { value: 'STOLEN',  label: 'Stolen',  description: 'Device has been reported stolen' },
     { value: 'BLOCKED', label: 'Blocked', description: 'Device access is restricted' }
   ];
 
+  // Keep local selectedStatus in sync if parent currentStatus changes
+  useEffect(() => {
+    if (!isEditing) {
+      setSelectedStatus(currentStatus);
+    }
+  }, [currentStatus, isEditing]);
+
+  // Helper to get label/description for a given status
+  const currentStatusMeta = useMemo(
+    () => statusOptions.find(o => o.value === currentStatus) ?? { label: currentStatus, description: '' },
+    [currentStatus]
+  );
+
+  const selectedStatusMeta = useMemo(
+    () => statusOptions.find(o => o.value === selectedStatus) ?? { label: selectedStatus, description: '' },
+    [selectedStatus]
+  );
+
   const validateForm = () => {
     const newErrors = {};
-    
-    if (selectedStatus !== currentStatus && !justification?.trim()) {
+
+    if (selectedStatus !== currentStatus && !justification.trim()) {
       newErrors.justification = 'Justification is required for status changes';
     }
-    
-    if (justification?.trim() && justification?.trim()?.length < 10) {
+
+    if (justification.trim() && justification.trim().length < 10) {
       newErrors.justification = 'Justification must be at least 10 characters';
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors)?.length === 0;
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = () => {
-    if (validateForm()) {
-      onStatusUpdate({
-        newStatus: selectedStatus,
-        justification: justification?.trim(),
-        timestamp: new Date()?.toISOString()
-      });
-      setIsEditing(false);
-      setJustification('');
-      setErrors({});
-    }
+    if (!validateForm()) return;
+
+    onStatusUpdate({
+      newStatus: selectedStatus,
+      justification: justification.trim(),
+      timestamp: new Date().toISOString()
+    });
+
+    setIsEditing(false);
+    setJustification('');
+    setErrors({});
   };
 
   const handleCancel = () => {
@@ -51,8 +70,23 @@ const StatusManagementPanel = ({ currentStatus, onStatusUpdate }) => {
     setErrors({});
   };
 
+  const statusIconName =
+    currentStatus === 'ACTIVE'
+      ? 'CheckCircle'
+      : currentStatus === 'STOLEN'
+      ? 'AlertTriangle'
+      : 'Ban';
+
+  const statusIconClass =
+    currentStatus === 'ACTIVE'
+      ? 'text-success'
+      : currentStatus === 'STOLEN'
+      ? 'text-error'
+      : 'text-warning';
+
   return (
     <div className="bg-card rounded-lg shadow-warm p-4 md:p-6 lg:p-8">
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 md:w-12 md:h-12 rounded-md bg-accent/10 flex items-center justify-center">
@@ -63,11 +97,11 @@ const StatusManagementPanel = ({ currentStatus, onStatusUpdate }) => {
               Status Management
             </h3>
             <p className="text-sm md:text-base text-muted-foreground">
-              Update device status and add notes
+              Update device status and provide an audit justification
             </p>
           </div>
         </div>
-        
+
         {!isEditing && (
           <Button
             variant="outline"
@@ -79,36 +113,41 @@ const StatusManagementPanel = ({ currentStatus, onStatusUpdate }) => {
           </Button>
         )}
       </div>
+
+      {/* View mode */}
       {!isEditing ? (
         <div className="space-y-4">
           <div className="flex items-center gap-3 p-4 bg-muted rounded-md">
-            <Icon 
-              name={currentStatus === 'ACTIVE' ? 'CheckCircle' : currentStatus === 'STOLEN' ? 'AlertTriangle' : 'Ban'} 
-              size={24} 
-              className={
-                currentStatus === 'ACTIVE' ? 'text-success' :
-                currentStatus === 'STOLEN'? 'text-error' : 'text-warning'
-              }
+            <Icon
+              name={statusIconName}
+              size={24}
+              className={statusIconClass}
             />
             <div>
-              <p className="caption text-muted-foreground">Current Status</p>
+              <p className="caption text-muted-foreground">Current status</p>
               <p className="text-base md:text-lg font-semibold text-foreground">
-                {currentStatus}
+                {currentStatusMeta.label}
               </p>
+              {currentStatusMeta.description && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  {currentStatusMeta.description}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="flex items-start gap-2 p-3 bg-secondary/10 rounded-md">
             <Icon name="Info" size={16} className="text-secondary flex-shrink-0 mt-0.5" />
             <p className="text-sm text-foreground">
-              Status changes require administrative justification and are logged in the audit trail.
+              All status changes are recorded with justification and appear in the audit trail.
             </p>
           </div>
         </div>
       ) : (
+        // Edit mode
         <div className="space-y-4">
           <Select
-            label="New Status"
+            label="New status"
             description="Select the new device status"
             options={statusOptions}
             value={selectedStatus}
@@ -116,14 +155,18 @@ const StatusManagementPanel = ({ currentStatus, onStatusUpdate }) => {
             required
           />
 
+          <div className="text-xs text-muted-foreground -mt-2">
+            {selectedStatusMeta.description}
+          </div>
+
           <Input
             label="Justification"
             type="text"
-            placeholder="Provide detailed reason for status change..."
+            placeholder="Provide a clear reason for this status change..."
             description="Minimum 10 characters required"
             value={justification}
-            onChange={(e) => setJustification(e?.target?.value)}
-            error={errors?.justification}
+            onChange={e => setJustification(e.target.value)}
+            error={errors.justification}
             required
           />
 
@@ -134,7 +177,7 @@ const StatusManagementPanel = ({ currentStatus, onStatusUpdate }) => {
               onClick={handleSubmit}
               className="sm:flex-1"
             >
-              Update Status
+              Update status
             </Button>
             <Button
               variant="outline"

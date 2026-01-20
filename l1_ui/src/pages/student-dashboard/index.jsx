@@ -78,7 +78,9 @@ const StudentDashboard = () => {
       statusFilter === 'ALL' || device.status === statusFilter;
 
     const matchesBrand =
-      brandFilter === 'ALL' || device.brand === brandFilter;
+  brandFilter === 'ALL' ||
+  device.brand.toLowerCase() === brandFilter.toLowerCase();
+
 
     return matchesSearch && matchesStatus && matchesBrand;
   });
@@ -86,7 +88,7 @@ const StudentDashboard = () => {
   const calculateStats = () => ({
     total: devices.length,
     active: devices.filter(d => d.status === 'ACTIVE').length,
-    stolen: devices.filter(d => d.status === 'STOLEN').length,
+    stolen: devices.filter(d => d.status === 'PENDING').length,
     blocked: devices.filter(d => d.status === 'BLOCKED').length
   });
     const handleDeviceClick = (deviceId) => {

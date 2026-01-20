@@ -6,7 +6,7 @@ const DeviceInfoCard = ({ device }) => {
   const getStatusColor = (status) => {
     const colors = {
       ACTIVE: 'bg-success text-success-foreground',
-      STOLEN: 'bg-error text-error-foreground',
+      PENDING: 'bg-error text-error-foreground',
       BLOCKED: 'bg-warning text-warning-foreground'
     };
     return colors?.[status] || 'bg-muted text-muted-foreground';
@@ -15,7 +15,7 @@ const DeviceInfoCard = ({ device }) => {
   const getStatusIcon = (status) => {
     const icons = {
       ACTIVE: 'CheckCircle',
-      STOLEN: 'AlertTriangle',
+      PENDING: 'Clock',
       BLOCKED: 'Ban'
     };
     return icons?.[status] || 'Info';
@@ -111,9 +111,9 @@ const DeviceInfoCard = ({ device }) => {
                   <Icon name="MapPin" size={20} color="var(--color-secondary)" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="caption text-muted-foreground mb-1">Last Location</p>
+                  <p className="caption text-muted-foreground mb-1">Department :</p>
                   <p className="text-sm md:text-base text-foreground line-clamp-2">
-                    {device?.lastLocation}
+                    {device?.department}
                   </p>
                 </div>
               </div>

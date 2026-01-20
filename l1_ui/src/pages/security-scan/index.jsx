@@ -69,7 +69,7 @@ const SecurityScan = () => {
   };
 
   useEffect(() => {
-    document.title = 'Security Scan - PC Owner Detector';
+    document.title = 'Security Scan - Device Owner Detector';
   }, []);
 
   return (

@@ -7,7 +7,7 @@ const FilterControls = ({ filters, onFilterChange, onReset, resultCount }) => {
   const statusOptions = [
     { value: 'all', label: 'All Statuses' },
     { value: 'ACTIVE', label: 'Active' },
-    { value: 'STOLEN', label: 'Stolen' },
+    { value: 'PENDING', label: 'PENDING' },
     { value: 'BLOCKED', label: 'Blocked' }
   ];
 

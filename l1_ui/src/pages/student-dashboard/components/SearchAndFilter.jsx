@@ -7,7 +7,7 @@ const SearchAndFilter = ({ searchTerm, onSearchChange, statusFilter, onStatusCha
   const statusOptions = [
     { value: 'ALL', label: 'All Status' },
     { value: 'ACTIVE', label: 'Active' },
-    { value: 'STOLEN', label: 'Stolen' },
+    { value: 'PENDING', label: 'PENDING' },
     { value: 'BLOCKED', label: 'Blocked' }
   ];
 

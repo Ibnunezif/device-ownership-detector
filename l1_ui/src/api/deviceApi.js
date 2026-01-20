@@ -32,3 +32,7 @@ export const getMyDevicesApi = (params) => {
 export const getDeviceTypesApi = () => {
   return httpClient.get('/device-type');
 };
+
+export const updateDeviceApi = () => {
+  return httpClient.get('/device-type');
+};
