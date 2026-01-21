@@ -350,7 +350,6 @@ const filteredDevices = devices?.filter((device) => {
               selectedDevices={selectedDevices}
               onSelectionChange={setSelectedDevices}
               onBulkAction={handleBulkAction} />
-
           </div>
 
           <BulkActionBar
