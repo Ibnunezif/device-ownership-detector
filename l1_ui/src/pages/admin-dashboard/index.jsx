@@ -247,18 +247,69 @@ const filteredDevices = devices?.filter((device) => {
     setSelectedDevices([]);
   };
 
-  const handleQuickAction = (actionId) => {
-    const actionRoutes = {
-      'mark-stolen': '/stolen-devices',
-      'verify-device': '/admin-dashboard',
-      'export-data': '/admin-dashboard',
-      'send-alert': '/admin-dashboard'
-    };
-
-    if (actionRoutes?.[actionId]) {
-      navigate(actionRoutes?.[actionId]);
+const handleQuickAction = async (actionId) => {
+  try {
+    if (selectedDevices.length === 0) {
+      setAlerts([{
+        id: 'no-selection',
+        type: 'warning',
+        title: 'No Devices Selected',
+        message: 'Select at least one device first.'
+      }]);
+      return;
     }
-  };
+
+    switch (actionId) {
+      case 'mark-stolen':
+        await Promise.all(
+          selectedDevices.map(deviceId =>
+            markDeviceAsStolen(deviceId, { status: 'stolen' })
+          )
+        );
+        break;
+
+      case 'verify-device':
+        await Promise.all(
+          selectedDevices.map(deviceId =>{
+            verifyDevice(deviceId, { status: 'approved' })
+            console.log(deviceId);
+          }
+          )
+        );
+        break;
+
+      case 'export-data':
+        navigate('/admin-dashboard/export');
+        return;
+
+      case 'send-alert':
+        navigate('/admin-dashboard/alerts');
+        return;
+
+      default:
+        return;
+    }
+
+    setAlerts([{
+      id: `success-${Date.now()}`,
+      type: 'success',
+      title: 'Action Successful',
+      message: `Action "${actionId}" applied to ${selectedDevices.length} device(s).`
+    }]);
+
+    // Refresh data
+    // fetchDevices();
+    setSelectedDevices([]);
+  } catch (error) {
+    setAlerts([{
+      id: `error-${Date.now()}`,
+      type: 'error',
+      title: 'Action Failed',
+      message: error.message
+    }]);
+  }
+};
+
 
  const handleLogout = () => {
   localStorage.removeItem('authToken');
