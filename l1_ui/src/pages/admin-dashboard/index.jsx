@@ -9,7 +9,7 @@ import DeviceTable from './components/DeviceTable';
 import FilterControls from './components/FilterControls';
 import BulkActionBar from './components/BulkActionBar';
 import Button from '../../components/ui/Button';
-import { getDevices,markDeviceAsStolen, verifyDevice, updateDevice  } from '../../services/deviceService';
+import { getDevices,markDeviceAsStolen, verifyDevice, blockDevice  } from '../../services/deviceService';
 import { getDashboardMetrics } from '../../api/dashboardApi';
 
 
@@ -138,11 +138,6 @@ const mapMetricsToCards = (metric) => [
   }
 ];
 
-
-
-
-
-
 useEffect(() => {
    const fetchMetrics = async () => {
     try {
@@ -263,16 +258,22 @@ const handleQuickAction = async (actionId) => {
       case 'mark-stolen':
         await Promise.all(
           selectedDevices.map(deviceId =>
-            markDeviceAsStolen(deviceId, { status: 'stolen' })
+            markDeviceAsStolen(deviceId)
           )
         );
         break;
+      case 'block-device':
+      await Promise.all(
+        selectedDevices.map(deviceId =>
+          blockDevice(deviceId)
+        )
+      );
+      break;
 
       case 'verify-device':
         await Promise.all(
           selectedDevices.map(deviceId =>{
-            verifyDevice(deviceId, { status: 'approved' })
-            console.log(deviceId);
+            verifyDevice(deviceId)
           }
           )
         );

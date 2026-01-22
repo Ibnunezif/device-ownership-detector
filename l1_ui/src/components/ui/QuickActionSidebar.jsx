@@ -15,6 +15,7 @@ const QuickActionSidebar = ({
     admin: [
       { id: 'mark-stolen', label: 'Mark as Stolen', icon: 'AlertTriangle', variant: 'destructive' },
       { id: 'verify-device', label: 'Verify Device', icon: 'CheckCircle', variant: 'success' },
+      { id: 'block-device', label: 'Block Device', icon: 'Ban', variant: 'warning' },
       { id: 'export-data', label: 'Export Data', icon: 'Download', variant: 'outline' },
       { id: 'send-alert', label: 'Send Alert', icon: 'Bell', variant: 'secondary' },
     ],

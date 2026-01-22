@@ -9,7 +9,7 @@ const DeviceTable = ({ devices, onDeviceClick, onBulkAction, selectedDevices, on
 
   const getStatusColor = (status) => {
     const colors = {
-      ACTIVE: 'text-success bg-success/10',
+      APPROVED: 'text-success bg-success/10',
       STOLEN: 'text-error bg-error/10',
       BLOCKED: 'text-warning bg-warning/10'
     };
@@ -143,7 +143,7 @@ const DeviceTable = ({ devices, onDeviceClick, onBulkAction, selectedDevices, on
                 <td className="px-4 py-3">
                   <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full caption font-semibold ${getStatusColor(device?.status)}`}>
     
-                    <Icon name={device?.status === 'ACTIVE' ? 'CheckCircle' : device?.status === 'STOLEN' ? 'AlertTriangle' : 'Ban'} size={14} />
+                    <Icon name={device?.status === 'APPROVED' ? 'CheckCircle' : device?.status === 'STOLEN' ? 'AlertTriangle' : 'Ban'} size={14} />
                     {device?.status}
                   </span>
                 </td>

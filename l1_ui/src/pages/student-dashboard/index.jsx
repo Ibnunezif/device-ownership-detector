@@ -87,8 +87,8 @@ const StudentDashboard = () => {
 
   const calculateStats = () => ({
     total: devices.length,
-    active: devices.filter(d => d.status === 'ACTIVE').length,
-    stolen: devices.filter(d => d.status === 'PENDING').length,
+    active: devices.filter(d => d.status === 'APPROVED').length,
+    stolen: devices.filter(d => d.status === 'STOLEN').length,
     blocked: devices.filter(d => d.status === 'BLOCKED').length
   });
     const handleDeviceClick = (deviceId) => {

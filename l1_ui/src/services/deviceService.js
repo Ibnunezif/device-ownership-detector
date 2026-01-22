@@ -131,7 +131,7 @@ export const updateDevice = async (deviceId, updates = {}, photo) => {
  * @param {string} deviceId
  */
 export const markDeviceAsStolen = async (deviceId) => {
-  return await updateDevice(deviceId, { status: 'STOLEN' });
+  return await updateDevice(deviceId, { status: 'stolen' });
 };
 
 /**
@@ -139,5 +139,9 @@ export const markDeviceAsStolen = async (deviceId) => {
  * @param {string} deviceId
  */
 export const verifyDevice = async (deviceId) => {
-  return await updateDevice(deviceId, { status: 'VERIFIED' });
+  return await updateDevice(deviceId, { status: 'approved' });
+};
+
+export const blockDevice = async (deviceId) => {
+  return await updateDevice(deviceId, { status: 'blocked' });
 };

@@ -6,7 +6,7 @@ import Icon from '../../../components/AppIcon';
 const SearchAndFilter = ({ searchTerm, onSearchChange, statusFilter, onStatusChange, brandFilter, onBrandChange }) => {
   const statusOptions = [
     { value: 'ALL', label: 'All Status' },
-    { value: 'ACTIVE', label: 'Active' },
+    { value: 'APPROVED', label: 'APPROVED' },
     { value: 'PENDING', label: 'PENDING' },
     { value: 'BLOCKED', label: 'Blocked' }
   ];

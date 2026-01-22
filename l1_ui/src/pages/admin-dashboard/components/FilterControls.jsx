@@ -6,9 +6,10 @@ import Button from '../../../components/ui/Button';
 const FilterControls = ({ filters, onFilterChange, onReset, resultCount }) => {
   const statusOptions = [
     { value: 'all', label: 'All Statuses' },
-    { value: 'ACTIVE', label: 'Active' },
+    { value: 'APPROVED', label: 'APPROVED' },
     { value: 'PENDING', label: 'PENDING' },
-    { value: 'BLOCKED', label: 'Blocked' }
+    {value: 'STOLEN', label:'STOLEN'},
+    { value: 'BLOCKED', label: 'BLOCKED' }
   ];
 
   const brandOptions = [
