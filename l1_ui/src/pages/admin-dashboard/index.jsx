@@ -40,102 +40,102 @@ const [metricsLoading, setMetricsLoading] = useState(false);
 
 
 const mapBackendDeviceToUI = (device) => ({
-  id: device.id,
+    id: device.id,
 
-  ownerName: device.owner?.name || 'Unknown',
-  ownerEmail: device.owner?.email || 'N/A',
-  ownerAvatar: device.owner?.image || null,
-  ownerAvatarAlt: device.owner?.name || 'Owner avatar',
+    ownerName: device.owner?.name || 'Unknown',
+    ownerEmail: device.owner?.email || 'N/A',
+    ownerAvatar: device.owner?.image || null,
+    ownerAvatarAlt: device.owner?.name || 'Owner avatar',
 
-  ownerType: device.owner?.department ? 'student' : 'staff',
+    ownerType: device.owner?.department ? 'student' : 'staff',
 
-  brand: device.brand,
-  serialNumber: device.serial_number,
+    brand: device.brand,
+    serialNumber: device.serial_number,
 
-  deviceImage: device.device_photo || null,
-  deviceImageAlt: device.brand,
+    deviceImage: device.device_photo || null,
+    deviceImageAlt: device.brand,
 
-  status: device.status.toUpperCase(),
+    status: device.status.toUpperCase(),
 
-  lastScan: '—',
-  lastScanLocation: '—',
+    lastScan: '—',
+    lastScanLocation: '—',
 
-  registeredDate: new Date(device.createdAt).toLocaleDateString()
-});
+    registeredDate: new Date(device.createdAt).toLocaleDateString()
+  });
 
-const mapMetricsToCards = (metric) => [
-  {
-    title: 'Total Devices',
-    value: metric.totalDevices,
-    trend: 'up',
-    trendValue: '(--)%',
-    description: 'Registered devices in the system',
-    icon: 'Laptop',         // Laptop icon represents devices/computers
-    iconColor: 'var(--color-primary)'
-  },
-  {
-    title: 'Total Gates',
-    value: metric.totalGates,
-    trend: 'up',
-    trendValue: '(--)%',
-    description: 'Active access gates',
-    icon: 'LogIn',          // LogIn icon can represent gates/access points
-    iconColor: 'var(--color-success)'
-  },
-  {
-    title: 'Total Libraries',
-    value: metric.totalLibraries,
-    trend: 'up',
-    trendValue: '(--)%',
-    description: 'Active libraries',
-    icon: 'BookOpen',       // BookOpen icon represents libraries
-    iconColor: 'var(--color-secondary)'
-  },
-  {
-    title: 'Total Movements',
-    value: metric.totalMovements,
-    trend: 'up',
-    trendValue: '(--)%',
-    description: 'Device movements in/out',
-    icon: 'Repeat',         // Repeat / Swap icon represents movements/transactions
-    iconColor: 'var(--color-accent)'
-  },
-  {
-    title: 'Students',
-    value: metric.roles?.students ?? 0,
-    trend: 'up',
-    trendValue: '(--)%',
-    description: 'Registered student users',
-    icon: 'User',           // Single user represents students
-    iconColor: 'var(--color-primary)'
-  },
-  {
-    title: 'Admins',
-    value: metric.roles?.admins ?? 0,
-    trend: 'up',
-    trendValue: '(--)%',
-    description: 'System administrators',
-    icon: 'Shield',         // Shield icon represents admin/security role
-    iconColor: 'var(--color-warning)'
-  },
-  {
-    title: 'Security Staff',
-    value: metric.roles?.securityStaff ?? 0,
-    trend: 'up',
-    trendValue: '(--)%',
-    description: 'Security personnel',
-    icon: 'Users',          // Users icon represents a team / staff
-    iconColor: 'var(--color-success)'
-  },
-  {
-    title: 'Security Chiefs',
-    value: metric.roles?.securityChiefs ?? 0,
-    trend: 'up',
-    trendValue: '(--)%',
-    description: 'Security chiefs / managers',
-    icon: 'Star',           // Star icon represents leadership or chief role
-    iconColor: 'var(--color-error)'
-  }
+  const mapMetricsToCards = (metric) => [
+    {
+      title: 'Total Devices',
+      value: metric.totalDevices,
+      trend: 'up',
+      trendValue: '(--)%',
+      description: 'Registered devices in the system',
+      icon: 'Laptop',         // Laptop icon represents devices/computers
+      iconColor: 'var(--color-primary)'
+    },
+    {
+      title: 'Total Gates',
+      value: metric.totalGates,
+      trend: 'up',
+      trendValue: '(--)%',
+      description: 'Active access gates',
+      icon: 'LogIn',          // LogIn icon can represent gates/access points
+      iconColor: 'var(--color-success)'
+    },
+    {
+      title: 'Total Libraries',
+      value: metric.totalLibraries,
+      trend: 'up',
+      trendValue: '(--)%',
+      description: 'Active libraries',
+      icon: 'BookOpen',       // BookOpen icon represents libraries
+      iconColor: 'var(--color-secondary)'
+    },
+    {
+      title: 'Total Movements',
+      value: metric.totalMovements,
+      trend: 'up',
+      trendValue: '(--)%',
+      description: 'Device movements in/out',
+      icon: 'Repeat',         // Repeat / Swap icon represents movements/transactions
+      iconColor: 'var(--color-accent)'
+    },
+    {
+      title: 'Students',
+      value: metric.roles?.students ?? 0,
+      trend: 'up',
+      trendValue: '(--)%',
+      description: 'Registered student users',
+      icon: 'User',           // Single user represents students
+      iconColor: 'var(--color-primary)'
+    },
+    {
+      title: 'Admins',
+      value: metric.roles?.admins ?? 0,
+      trend: 'up',
+      trendValue: '(--)%',
+      description: 'System administrators',
+      icon: 'Shield',         // Shield icon represents admin/security role
+      iconColor: 'var(--color-warning)'
+    },
+    {
+      title: 'Security Staff',
+      value: metric.roles?.securityStaff ?? 0,
+      trend: 'up',
+      trendValue: '(--)%',
+      description: 'Security personnel',
+      icon: 'Users',          // Users icon represents a team / staff
+      iconColor: 'var(--color-success)'
+    },
+    {
+      title: 'Security Chiefs',
+      value: metric.roles?.securityChiefs ?? 0,
+      trend: 'up',
+      trendValue: '(--)%',
+      description: 'Security chiefs / managers',
+      icon: 'Star',           // Star icon represents leadership or chief role
+      iconColor: 'var(--color-error)'
+    }
 ];
 
 useEffect(() => {
@@ -163,22 +163,30 @@ useEffect(() => {
       setDevices(mappedDevices);
 
       const stolenDevices = mappedDevices.filter(d => d.status === 'STOLEN');
-      if (stolenDevices.length > 0) {
-        setAlerts([
-          {
-            id: 'alert-1',
-            type: 'error',
-            title: 'Stolen Device Alert',
-            message: `${stolenDevices.length} stolen ${
-              stolenDevices.length === 1 ? 'device' : 'devices'
-            } detected. Immediate action required.`,
-            action: {
-              label: 'View Stolen Devices',
-              onClick: () => navigate('/stolen-devices')
-            }
-          }
-        ]);
+   if (stolenDevices.length > 0) {
+    setAlerts([
+      {
+        id: 'alert-1',
+        type: 'error',
+        title: 'Stolen Device Alert',
+        message: `${stolenDevices.length} stolen ${
+          stolenDevices.length === 1 ? 'device' : 'devices'
+        } detected. Immediate action required.`,
+        action: {
+          label: 'View Stolen Devices',
+          onClick: () => navigate('/stolen-devices')
+        }
       }
+    ]);
+
+    // Remove alert after 30 seconds (30,000 ms)
+    const timer = setTimeout(() => {
+      setAlerts([]);
+    }, 10000);
+
+    // Cleanup to prevent memory leaks
+    return () => clearTimeout(timer);
+  }
     } catch (err) {
       console.error(err);
       setError('Failed to load devices');

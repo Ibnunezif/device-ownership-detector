@@ -13,142 +13,26 @@ import UpdateStatusModal from './components/UpdateStatusModal';
 import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
 
+import { getDevices,markDeviceAsStolen, verifyDevice, blockDevice  } from '../../services/deviceService';
+import { getDashboardMetrics } from '../../api/dashboardApi';
+
 const StolenDevicesPage = () => {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState('table');
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [alerts, setAlerts] = useState([]);
+const [stolenDevices, setStolenDevices] = useState([]);
+const [recentScans, setRecentScans] = useState([]);
+const [stats, setStats] = useState([]);
+const [loading, setLoading] = useState(true);
+
   const [filters, setFilters] = useState({
     search: '',
     status: 'all',
     deviceType: 'all',
     dateFrom: ''
   });
-
-  const stolenDevices = [
-  {
-    id: 1,
-    brand: "Dell",
-    model: "XPS 15",
-    serialNumber: "DL9876543210",
-    owner: "Sarah Johnson",
-    theftDate: "2025-12-15T10:30:00",
-    lastLocation: "Library Building, 3rd Floor",
-    scanAttempts: 3,
-    recoveryStatus: "STOLEN",
-    image: "https://images.unsplash.com/photo-1595859318210-4d8019c7d5d5",
-    imageAlt: "Silver Dell XPS 15 laptop with black keyboard on white desk surface"
-  },
-  {
-    id: 2,
-    brand: "Apple",
-    model: "MacBook Pro 16",
-    serialNumber: "AP1234567890",
-    owner: "Michael Chen",
-    theftDate: "2025-12-20T14:15:00",
-    lastLocation: "Student Center, Cafeteria",
-    scanAttempts: 1,
-    recoveryStatus: "INVESTIGATING",
-    image: "https://images.unsplash.com/photo-1624505134344-a0a96e34e2c2",
-    imageAlt: "Space gray Apple MacBook Pro with Touch Bar on wooden table"
-  },
-  {
-    id: 3,
-    brand: "HP",
-    model: "Pavilion 14",
-    serialNumber: "HP5678901234",
-    owner: "Emily Rodriguez",
-    theftDate: "2025-12-10T09:00:00",
-    lastLocation: "Engineering Lab, Room 205",
-    scanAttempts: 5,
-    recoveryStatus: "STOLEN",
-    image: "https://img.rocket.new/generatedImages/rocket_gen_img_1e78196af-1765649770574.png",
-    imageAlt: "Silver HP Pavilion laptop with blue screen display on office desk"
-  },
-  {
-    id: 4,
-    brand: "Lenovo",
-    model: "ThinkPad X1",
-    serialNumber: "LN3456789012",
-    owner: "David Kim",
-    theftDate: "2025-11-28T16:45:00",
-    lastLocation: "Parking Lot B",
-    scanAttempts: 0,
-    recoveryStatus: "RECOVERED",
-    image: "https://images.unsplash.com/photo-1497171090531-fa6297066879",
-    imageAlt: "Black Lenovo ThinkPad laptop with red trackpoint on conference table"
-  },
-  {
-    id: 5,
-    brand: "Asus",
-    model: "ROG Strix",
-    serialNumber: "AS7890123456",
-    owner: "Jessica Martinez",
-    theftDate: "2025-12-22T11:20:00",
-    lastLocation: "Computer Science Building",
-    scanAttempts: 2,
-    recoveryStatus: "STOLEN",
-    image: "https://images.unsplash.com/photo-1566626372918-e8ab16497256",
-    imageAlt: "Black Asus ROG gaming laptop with RGB keyboard lighting on gaming desk"
-  }];
-
-
-  const recentScans = [
-  {
-    id: 1,
-    deviceId: 1,
-    deviceBrand: "Dell",
-    deviceModel: "XPS 15",
-    serialNumber: "DL9876543210",
-    location: "Main Gate Security Checkpoint",
-    scannedBy: "Officer James Wilson",
-    timestamp: "2025-12-27T12:15:00"
-  },
-  {
-    id: 2,
-    deviceId: 3,
-    deviceBrand: "HP",
-    deviceModel: "Pavilion 14",
-    serialNumber: "HP5678901234",
-    location: "Dormitory Entrance",
-    scannedBy: "Officer Maria Garcia",
-    timestamp: "2025-12-27T11:30:00"
-  }];
-
-
-  const stats = [
-  {
-    title: "Total Stolen Devices",
-    value: "12",
-    icon: "AlertTriangle",
-    variant: "error",
-    trend: "up",
-    trendValue: "+3"
-  },
-  {
-    title: "Recovered This Month",
-    value: "4",
-    icon: "CheckCircle",
-    variant: "success",
-    trend: "down",
-    trendValue: "-1"
-  },
-  {
-    title: "Under Investigation",
-    value: "5",
-    icon: "Search",
-    variant: "warning"
-  },
-  {
-    title: "Recent Scan Attempts",
-    value: "18",
-    icon: "Activity",
-    variant: "default",
-    trend: "up",
-    trendValue: "+6"
-  }];
-
 
   const breadcrumbItems = [
   { label: 'Dashboard', path: '/admin-dashboard', icon: 'LayoutDashboard' },
@@ -171,6 +55,75 @@ const StolenDevicesPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+
+      // 1. Get stolen devices
+      const devicesRes = await getDevices({ status: 'stolen' });
+      console.log(devicesRes.devices)
+      const normalizedDevices = devicesRes.devices.map(d => ({
+          id: d.id,
+          owner: d.owner?.name,
+          brand: d.brand,
+          model: d.model,
+          serialNumber: d.serial_number,
+          recoveryStatus: d.status,
+          department: d.owner?.department,
+          deviceType: d.device_type,
+          image: d.device_photo,
+          ownerImage: d.owner?.image
+        }));
+        setStolenDevices(normalizedDevices);
+
+
+      // 2. Get dashboard metrics
+      const metricsRes = await getDashboardMetrics();      
+          setStats([
+          {
+            title: 'Total Devices',
+            value: metricsRes.totalDevices,
+            icon: 'Smartphone',
+            variant: 'default'
+          },
+          {
+            title: 'Total Users',
+            value: metricsRes.totalUsers,
+            icon: 'Users',
+            variant: 'success'
+          },
+          {
+            title: 'Total Movements',
+            value: metricsRes.totalMovements,
+            icon: 'Activity',
+            variant: 'warning'
+          },
+          {
+            title: 'Security Staff',
+            value: metricsRes.roles.securityStaff,
+            icon: 'Shield',
+            variant: 'error'
+          }
+          ]);
+
+
+    } catch (error) {
+      setAlerts([{
+        id: 'load-error',
+        type: 'error',
+        title: 'Data Load Failed',
+        message: 'Unable to fetch stolen devices data.'
+      }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, []);
+
+
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
@@ -188,11 +141,38 @@ const StolenDevicesPage = () => {
     navigate(`/device-detail?id=${deviceId}`);
   };
 
-  const handleUpdateStatus = (deviceId) => {
-    const device = stolenDevices?.find((d) => d?.id === deviceId);
-    setSelectedDevice(device);
-    setShowUpdateModal(true);
-  };
+const handleUpdateStatus = async (deviceId, status, notes) => {
+  try {
+    await verifyDevice(deviceId, { status, notes });
+
+    setAlerts(prev => [
+      ...prev,
+      {
+        id: `update-${Date.now()}`,
+        type: 'success',
+        title: 'Status Updated',
+        message: `Device recovery status updated to ${status}`
+      }
+    ]);
+
+    const refreshed = await getDevices({ status: 'stolen' });
+    setStolenDevices(refreshed.devices);
+
+    setShowUpdateModal(false);
+  } catch (error) {
+    setAlerts(prev => [
+      ...prev,
+      {
+        id: `update-failed`,
+        type: 'error',
+        title: 'Update Failed',
+        message: 'Could not update device status.'
+      }
+    ]);
+  }
+};
+
+
 
   const handleViewScans = (deviceId) => {
     navigate(`/logs?deviceId=${deviceId}`);
@@ -207,17 +187,6 @@ const StolenDevicesPage = () => {
     };
     setAlerts((prev) => [...prev, newAlert]);
   };
-
-  const handleStatusUpdate = (deviceId, status, notes) => {
-    const successAlert = {
-      id: `update-${Date.now()}`,
-      type: 'success',
-      title: 'Status Updated',
-      message: `Device recovery status has been updated to ${status}`
-    };
-    setAlerts((prev) => [...prev, successAlert]);
-  };
-
   const handleQuickAction = (actionId) => {
     switch (actionId) {
       case 'mark-stolen':navigate('/admin-dashboard');
@@ -250,7 +219,7 @@ const StolenDevicesPage = () => {
   };
 
   const filteredDevices = stolenDevices?.filter((device) => {
-    const matchesSearch = device?.serialNumber?.toLowerCase()?.includes(filters?.search?.toLowerCase()) ||
+    const matchesSearch = device?.serial_number?.toLowerCase()?.includes(filters?.search?.toLowerCase()) ||
     device?.brand?.toLowerCase()?.includes(filters?.search?.toLowerCase()) ||
     device?.model?.toLowerCase()?.includes(filters?.search?.toLowerCase());
     const matchesStatus = filters?.status === 'all' || device?.recoveryStatus === filters?.status;
@@ -371,7 +340,6 @@ const StolenDevicesPage = () => {
 
                   </div> :
               null}
-
                 {viewMode === 'grid' || viewMode === 'table' ?
               <div className={viewMode === 'table' ? 'lg:hidden p-4 md:p-6 space-y-4' : 'p-4 md:p-6 grid grid-cols-1 gap-4'}>
                     {filteredDevices?.map((device) =>

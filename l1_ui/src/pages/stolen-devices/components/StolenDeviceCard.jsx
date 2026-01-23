@@ -48,7 +48,8 @@ const StolenDeviceCard = ({ device, onViewDetails, onUpdateStatus, onViewScans }
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
               <div className="flex items-center gap-2">
                 <Icon name="User" size={16} className="text-muted-foreground flex-shrink-0" />
-                <span className="caption text-foreground truncate">{device?.owner}</span>
+                ${console.log(device.owner?.name)}
+                <span className="caption text-foreground truncate">{device.owner?.name}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Icon name="Calendar" size={16} className="text-error flex-shrink-0" />
