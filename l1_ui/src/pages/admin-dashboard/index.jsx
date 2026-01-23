@@ -9,9 +9,8 @@ import DeviceTable from './components/DeviceTable';
 import FilterControls from './components/FilterControls';
 import BulkActionBar from './components/BulkActionBar';
 import Button from '../../components/ui/Button';
-import { getDevices,markDeviceAsStolen, verifyDevice, blockDevice  } from '../../services/deviceService';
+import { getDevices, markDeviceAsStolen, verifyDevice, blockDevice } from '../../services/deviceService';
 import { getDashboardMetrics } from '../../api/dashboardApi';
-
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -26,40 +25,31 @@ const AdminDashboard = () => {
     dateTo: ''
   });
 
-
   const breadcrumbItems = [
-  { label: 'Home', path: '/admin-dashboard', icon: 'Home' },
-  { label: 'Dashboard', path: '/admin-dashboard', icon: 'LayoutDashboard' }];
+    { label: 'Home', path: '/admin-dashboard', icon: 'Home' },
+    { label: 'Dashboard', path: '/admin-dashboard', icon: 'LayoutDashboard' }
+  ];
 
+  const [devices, setDevices] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [metrics, setMetrics] = useState([]);
+  const [metricsLoading, setMetricsLoading] = useState(false);
 
-const [devices, setDevices] = useState([]);
-const [loading, setLoading] = useState(false);
-const [error, setError] = useState('');
-const [metrics, setMetrics] = useState([]);
-const [metricsLoading, setMetricsLoading] = useState(false);
-
-
-const mapBackendDeviceToUI = (device) => ({
+  const mapBackendDeviceToUI = (device) => ({
     id: device.id,
-
     ownerName: device.owner?.name || 'Unknown',
     ownerEmail: device.owner?.email || 'N/A',
     ownerAvatar: device.owner?.image || null,
     ownerAvatarAlt: device.owner?.name || 'Owner avatar',
-
     ownerType: device.owner?.department ? 'student' : 'staff',
-
     brand: device.brand,
     serialNumber: device.serial_number,
-
     deviceImage: device.device_photo || null,
     deviceImageAlt: device.brand,
-
     status: device.status.toUpperCase(),
-
     lastScan: '—',
     lastScanLocation: '—',
-
     registeredDate: new Date(device.createdAt).toLocaleDateString()
   });
 
@@ -70,7 +60,7 @@ const mapBackendDeviceToUI = (device) => ({
       trend: 'up',
       trendValue: '(--)%',
       description: 'Registered devices in the system',
-      icon: 'Laptop',         // Laptop icon represents devices/computers
+      icon: 'Laptop',
       iconColor: 'var(--color-primary)'
     },
     {
@@ -79,7 +69,7 @@ const mapBackendDeviceToUI = (device) => ({
       trend: 'up',
       trendValue: '(--)%',
       description: 'Active access gates',
-      icon: 'LogIn',          // LogIn icon can represent gates/access points
+      icon: 'LogIn',
       iconColor: 'var(--color-success)'
     },
     {
@@ -88,7 +78,7 @@ const mapBackendDeviceToUI = (device) => ({
       trend: 'up',
       trendValue: '(--)%',
       description: 'Active libraries',
-      icon: 'BookOpen',       // BookOpen icon represents libraries
+      icon: 'BookOpen',
       iconColor: 'var(--color-secondary)'
     },
     {
@@ -97,7 +87,7 @@ const mapBackendDeviceToUI = (device) => ({
       trend: 'up',
       trendValue: '(--)%',
       description: 'Device movements in/out',
-      icon: 'Repeat',         // Repeat / Swap icon represents movements/transactions
+      icon: 'Repeat',
       iconColor: 'var(--color-accent)'
     },
     {
@@ -106,7 +96,7 @@ const mapBackendDeviceToUI = (device) => ({
       trend: 'up',
       trendValue: '(--)%',
       description: 'Registered student users',
-      icon: 'User',           // Single user represents students
+      icon: 'User',
       iconColor: 'var(--color-primary)'
     },
     {
@@ -115,7 +105,7 @@ const mapBackendDeviceToUI = (device) => ({
       trend: 'up',
       trendValue: '(--)%',
       description: 'System administrators',
-      icon: 'Shield',         // Shield icon represents admin/security role
+      icon: 'Shield',
       iconColor: 'var(--color-warning)'
     },
     {
@@ -124,7 +114,7 @@ const mapBackendDeviceToUI = (device) => ({
       trend: 'up',
       trendValue: '(--)%',
       description: 'Security personnel',
-      icon: 'Users',          // Users icon represents a team / staff
+      icon: 'Users',
       iconColor: 'var(--color-success)'
     },
     {
@@ -133,60 +123,37 @@ const mapBackendDeviceToUI = (device) => ({
       trend: 'up',
       trendValue: '(--)%',
       description: 'Security chiefs / managers',
-      icon: 'Star',           // Star icon represents leadership or chief role
+      icon: 'Star',
       iconColor: 'var(--color-error)'
     }
-];
+  ];
 
-useEffect(() => {
-   const fetchMetrics = async () => {
-    try {
-      const metricData = await getDashboardMetrics(); // returns object
-      const mappedMetrics = mapMetricsToCards(metricData); // convert to array
-      setMetrics(mappedMetrics);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  fetchMetrics();
+  // Fetch devices
   const fetchDevices = async () => {
     try {
       setLoading(true);
       setError('');
 
-      const { devices } = await getDevices({
-        page: 1,
-        limit: 10
-      });
-
+      const { devices } = await getDevices({ page: 1, limit: 10 });
       const mappedDevices = devices.map(mapBackendDeviceToUI);
       setDevices(mappedDevices);
 
       const stolenDevices = mappedDevices.filter(d => d.status === 'STOLEN');
-   if (stolenDevices.length > 0) {
-    setAlerts([
-      {
-        id: 'alert-1',
-        type: 'error',
-        title: 'Stolen Device Alert',
-        message: `${stolenDevices.length} stolen ${
-          stolenDevices.length === 1 ? 'device' : 'devices'
-        } detected. Immediate action required.`,
-        action: {
-          label: 'View Stolen Devices',
-          onClick: () => navigate('/stolen-devices')
-        }
+      if (stolenDevices.length > 0) {
+        setAlerts([{
+          id: 'alert-1',
+          type: 'error',
+          title: 'Stolen Device Alert',
+          message: `${stolenDevices.length} stolen ${stolenDevices.length === 1 ? 'device' : 'devices'} detected. Immediate action required.`,
+          action: {
+            label: 'View Stolen Devices',
+            onClick: () => navigate('/stolen-devices')
+          }
+        }]);
+
+        setTimeout(() => setAlerts([]), 10000);
       }
-    ]);
 
-    // Remove alert after 30 seconds (30,000 ms)
-    const timer = setTimeout(() => {
-      setAlerts([]);
-    }, 10000);
-
-    // Cleanup to prevent memory leaks
-    return () => clearTimeout(timer);
-  }
     } catch (err) {
       console.error(err);
       setError('Failed to load devices');
@@ -195,9 +162,25 @@ useEffect(() => {
     }
   };
 
-  fetchDevices();
-}, [navigate]);
+  // Fetch metrics
+  const fetchMetrics = async () => {
+    try {
+      setMetricsLoading(true);
+      const metricData = await getDashboardMetrics();
+      const mappedMetrics = mapMetricsToCards(metricData);
+      setMetrics(mappedMetrics);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setMetricsLoading(false);
+    }
+  };
 
+  // Initial load
+  useEffect(() => {
+    fetchDevices();
+    fetchMetrics();
+  }, []);
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -214,213 +197,145 @@ useEffect(() => {
     });
   };
 
-const filteredDevices = devices?.filter((device) => {
-  if (filters?.search) {
-    const searchLower = filters?.search.toLowerCase();
-    const matchesSearch =
-      device?.ownerName?.toLowerCase()?.includes(searchLower) ||
-      device?.ownerEmail?.toLowerCase()?.includes(searchLower) ||
-      device?.serialNumber?.toLowerCase()?.includes(searchLower) ||
-      device?.brand?.toLowerCase()?.includes(searchLower);
-    if (!matchesSearch) return false;
-  }
+  const filteredDevices = devices?.filter((device) => {
+    if (filters?.search) {
+      const searchLower = filters?.search.toLowerCase();
+      const matchesSearch =
+        device?.ownerName?.toLowerCase()?.includes(searchLower) ||
+        device?.ownerEmail?.toLowerCase()?.includes(searchLower) ||
+        device?.serialNumber?.toLowerCase()?.includes(searchLower) ||
+        device?.brand?.toLowerCase()?.includes(searchLower);
+      if (!matchesSearch) return false;
+    }
+    if (filters?.status !== 'all' && device?.status.toLowerCase() !== filters?.status.toLowerCase()) return false;
+    if (filters?.brand !== 'all' && device?.brand.toLowerCase() !== filters?.brand.toLowerCase()) return false;
+    if (filters?.ownerType !== 'all' && device?.ownerType.toLowerCase() !== filters?.ownerType.toLowerCase()) return false;
+    return true;
+  });
 
-  if (filters?.status !== 'all' && device?.status.toLowerCase() !== filters?.status.toLowerCase()) return false;
-  if (filters?.brand !== 'all' && device?.brand.toLowerCase() !== filters?.brand.toLowerCase()) return false;
-  if (filters?.ownerType !== 'all' && device?.ownerType.toLowerCase() !== filters?.ownerType.toLowerCase()) return false;
-
-  return true;
-});
-
-
-  const handleDeviceClick = (deviceId) => {
-    navigate(`/device-detail?id=${deviceId}`);
-  };
+  const handleDeviceClick = (deviceId) => navigate(`/device-detail?id=${deviceId}`);
 
   const handleBulkAction = (action) => {
     console.log(`Performing ${action} on ${selectedDevices?.length} devices`);
-    setAlerts([
-    {
+    setAlerts([{
       id: `bulk-${Date.now()}`,
       type: 'success',
       title: 'Bulk Action Completed',
       message: `Successfully performed ${action} on ${selectedDevices?.length} ${selectedDevices?.length === 1 ? 'device' : 'devices'}.`
-    }]
-    );
+    }]);
     setSelectedDevices([]);
   };
 
-const handleQuickAction = async (actionId) => {
-  try {
-    if (selectedDevices.length === 0) {
+  const handleQuickAction = async (actionId) => {
+    try {
+      if (selectedDevices.length === 0) {
+        setAlerts([{
+          id: 'no-selection',
+          type: 'warning',
+          title: 'No Devices Selected',
+          message: 'Select at least one device first.'
+        }]);
+        return;
+      }
+
+      switch (actionId) {
+        case 'mark-stolen':
+          await Promise.all(selectedDevices.map(deviceId => markDeviceAsStolen(deviceId)));
+          break;
+        case 'block-device':
+          await Promise.all(selectedDevices.map(deviceId => blockDevice(deviceId)));
+          break;
+        case 'verify-device':
+          await Promise.all(selectedDevices.map(deviceId => verifyDevice(deviceId)));
+          break;
+        case 'export-data':
+          navigate('/admin-dashboard/export');
+          return;
+        case 'send-alert':
+          navigate('/admin-dashboard/alerts');
+          return;
+        default:
+          return;
+      }
+
+      // Refresh devices after action
+      await fetchDevices();
+
+      setSelectedDevices([]);
       setAlerts([{
-        id: 'no-selection',
-        type: 'warning',
-        title: 'No Devices Selected',
-        message: 'Select at least one device first.'
+        id: `success-${Date.now()}`,
+        type: 'success',
+        title: 'Action Successful',
+        message: `Action "${actionId}" applied to ${selectedDevices.length} device(s).`
       }]);
-      return;
+
+      setTimeout(() => setAlerts([]), 5000);
+    } catch (error) {
+      setAlerts([{
+        id: `error-${Date.now()}`,
+        type: 'error',
+        title: 'Action Failed',
+        message: error.message
+      }]);
     }
-
-    switch (actionId) {
-      case 'mark-stolen':
-        await Promise.all(
-          selectedDevices.map(deviceId =>
-            markDeviceAsStolen(deviceId)
-          )
-        );
-        break;
-      case 'block-device':
-      await Promise.all(
-        selectedDevices.map(deviceId =>
-          blockDevice(deviceId)
-        )
-      );
-      break;
-
-      case 'verify-device':
-        await Promise.all(
-          selectedDevices.map(deviceId =>{
-            verifyDevice(deviceId)
-          }
-          )
-        );
-        break;
-
-      case 'export-data':
-        navigate('/admin-dashboard/export');
-        return;
-
-      case 'send-alert':
-        navigate('/admin-dashboard/alerts');
-        return;
-
-      default:
-        return;
-    }
-
-    setAlerts([{
-      id: `success-${Date.now()}`,
-      type: 'success',
-      title: 'Action Successful',
-      message: `Action "${actionId}" applied to ${selectedDevices.length} device(s).`
-    }]);
-
-    // Refresh data
-    // fetchDevices();
-    setSelectedDevices([]);
-  } catch (error) {
-    setAlerts([{
-      id: `error-${Date.now()}`,
-      type: 'error',
-      title: 'Action Failed',
-      message: error.message
-    }]);
-  }
-};
-
-
- const handleLogout = () => {
-  localStorage.removeItem('authToken');
-  localStorage.removeItem('user');
-  localStorage.removeItem('rememberMe');
-
-  // Optional: clear everything
-  localStorage.clear();
-
-  navigate('/login', { replace: true });
-};
-
-
-  const handleDismissAlert = (alertId) => {
-    setAlerts(alerts?.filter((alert) => alert?.id !== alertId));
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('rememberMe');
+    localStorage.clear();
+    navigate('/login', { replace: true });
+  };
+
+  const handleDismissAlert = (alertId) => setAlerts(alerts?.filter((alert) => alert?.id !== alertId));
 
   return (
     <div className="min-h-screen bg-background">
       <RoleBasedNavbar userRole="admin" onLogout={handleLogout} />
       <AlertNotificationBanner alerts={alerts} onDismiss={handleDismissAlert} />
       <QuickActionSidebar userRole="admin" onActionClick={handleQuickAction} />
+
       <main className="pt-16 lg:pr-64">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
           <BreadcrumbNavigation items={breadcrumbItems} />
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
             <div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2">
-                Admin Dashboard
-              </h1>
-              <p className="text-sm md:text-base text-muted-foreground">
-                Comprehensive device management and system statistics
-              </p>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2">Admin Dashboard</h1>
+              <p className="text-sm md:text-base text-muted-foreground">Comprehensive device management and system statistics</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button
-                variant="outline"
-                iconName="FileText"
-                onClick={() => navigate('/logs')}>
-
-                View Logs
-              </Button>
-              <Button
-                variant="default"
-                iconName="Download"
-                onClick={() => console.log('Export report')}>
-
-                Export Report
-              </Button>
+              <Button variant="outline" iconName="FileText" onClick={() => navigate('/logs')}>View Logs</Button>
+              <Button variant="default" iconName="Download" onClick={() => console.log('Export report')}>Export Report</Button>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-            {metricsLoading && (
-            <p className="text-center text-muted-foreground">
-              Loading dashboard metrics...
-            </p>
-          )}
-
-            {metrics?.map((metric, index) =>
-            <MetricCard key={index} {...metric} />
-            )}
+            {metricsLoading && <p className="text-center text-muted-foreground">Loading dashboard metrics...</p>}
+            {metrics?.map((metric, index) => <MetricCard key={index} {...metric} />)}
           </div>
 
-          <FilterControls
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            onReset={handleResetFilters}
-            resultCount={filteredDevices?.length} />
-
+          <FilterControls filters={filters} onFilterChange={handleFilterChange} onReset={handleResetFilters} resultCount={filteredDevices?.length} />
 
           <div className="mb-20 lg:mb-6">
-            {loading && (
-  <p className="text-center py-6 text-muted-foreground">
-    Loading devices...
-  </p>
-)}
-
-{error && (
-  <p className="text-center py-6 text-error">
-    {error}
-  </p>
-)}
+            {loading && <p className="text-center py-6 text-muted-foreground">Loading devices...</p>}
+            {error && <p className="text-center py-6 text-error">{error}</p>}
 
             <DeviceTable
               devices={filteredDevices}
               onDeviceClick={handleDeviceClick}
               selectedDevices={selectedDevices}
               onSelectionChange={setSelectedDevices}
-              onBulkAction={handleBulkAction} />
+              onBulkAction={handleBulkAction}
+            />
           </div>
 
-          <BulkActionBar
-            selectedCount={selectedDevices?.length}
-            onAction={handleBulkAction}
-            onClearSelection={() => setSelectedDevices([])} />
-
+          <BulkActionBar selectedCount={selectedDevices?.length} onAction={handleBulkAction} onClearSelection={() => setSelectedDevices([])} />
         </div>
       </main>
-    </div>);
-
+    </div>
+  );
 };
 
 export default AdminDashboard;
