@@ -32,7 +32,7 @@ const RegistrationPrompt = ({ disabled }) => {
       </div>
 
       <p className="mt-4 text-xs md:text-sm text-muted-foreground">
-        Register as a student, security personnel, or administrator to access the system
+        Register as a student to access the system
       </p>
     </div>
   );

@@ -4,6 +4,7 @@ import {
   getDevicesApi,
   getMyDevicesApi,
   getDeviceTypesApi,
+  updateDeviceApi,
 } from '../api/deviceApi';
 
 /**
@@ -99,4 +100,48 @@ export const getDeviceByIndividual = async (deviceId) => {
 export const getDeviceTypes = async () => {
   const response = await getDeviceTypesApi();
   return response.data.data.deviceTypes;
+};
+
+
+/**
+ * General device update (supports optional file upload)
+ * @param {string} deviceId - Device MongoDB ID
+ * @param {Object} updates - Fields to update
+ * @param {File} [photo] - Optional new device photo
+ */
+export const updateDevice = async (deviceId, updates = {}, photo) => {
+  const formData = new FormData();
+
+  Object.keys(updates).forEach((key) => {
+    if (updates[key] !== undefined && updates[key] !== null) {
+      formData.append(key, updates[key]);
+    }
+  });
+
+  if (photo instanceof File) {
+    formData.append('device_photo', photo);
+  }
+
+  const response = await updateDeviceApi(deviceId, formData);
+  return response.data;
+};
+
+/**
+ * Quick Action: Mark device as stolen
+ * @param {string} deviceId
+ */
+export const markDeviceAsStolen = async (deviceId) => {
+  return await updateDevice(deviceId, { status: 'stolen' });
+};
+
+/**
+ * Quick Action: Verify device
+ * @param {string} deviceId
+ */
+export const verifyDevice = async (deviceId) => {
+  return await updateDevice(deviceId, { status: 'approved' });
+};
+
+export const blockDevice = async (deviceId) => {
+  return await updateDevice(deviceId, { status: 'blocked' });
 };

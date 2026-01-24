@@ -7,7 +7,7 @@ import QuickActionSidebar from '../../components/ui/QuickActionSidebar';
 import DeviceInfoCard from './components/DeviceInfoCard';
 import ScanTimeline from './components/ScanTimeline';
 import StatusManagementPanel from './components/StatusManagementPanel';
-import PhotoGallery from './components/PhotoGallery';
+// import PhotoGallery from './components/PhotoGallery';
 import QRCodeGenerator from './components/QRCodeGenerator';
 import OwnerCommunication from './components/OwnerCommunication';
 import { getDeviceByIndividual } from '../../services/deviceService';
@@ -29,41 +29,18 @@ const DeviceDetailIndividual = () => {
 
         setDeviceData({
           deviceId: data?.id,
-          barcode: data?.barcode,
-
           brand: data?.brand,
           model: data?.model,
           serialNumber: data?.serial_number,
-          status: data?.status?.toUpperCase(),
-
+          status: data?.status,
           image: data?.device_photo,
-          imageAlt: `${data?.brand} ${data?.model}`,
-
+          imageAlt: data?.device_type,
           ownerName: data?.owner?.name,
           ownerEmail: data?.owner?.email,
-          ownerPhone: data?.owner?.phone ?? 'N/A',
-          ownerDepartment: data?.owner?.department,
-          ownerUniversityId: data?.owner?.university_id,
-
+          ownerPhone: data?.owner?.phone,
           registeredDate: data?.createdAt,
-          lastLocation: 'N/A',
-          notes: `Device Type: ${data?.device_type}`,
-
-          photos: data?.device_photo
-            ? [
-                {
-                  id: 1,
-                  url: data.device_photo,
-                  alt: 'Primary device photo',
-                  caption: 'Uploaded device image',
-                  uploadedDate: data.createdAt,
-                  isPrimary: true
-                }
-              ]
-            : [],
-
-          scans: [],
-          notificationHistory: []
+          department: data?.owner?.department,
+          barcode: data?.barcode,
         });
       } catch (err) {
         console.error(err);
@@ -86,7 +63,11 @@ const DeviceDetailIndividual = () => {
     { label: 'Device Details' }
   ];
 
-  const handleLogout = () => navigate('/login');
+  const handleLogout = () =>{ 
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    navigate('/login')
+  };
 
   const handleStatusUpdate = (updateData) => {
     const newAlert = {
@@ -153,26 +134,10 @@ const DeviceDetailIndividual = () => {
               />
 
               <QRCodeGenerator
-                value={deviceData.barcode}
-                deviceInfo={{
-                  brand: deviceData.brand,
-                  model: deviceData.model,
-                  ownerName: deviceData.ownerName
-                }}
+                deviceId={deviceData?.deviceId}
+                deviceInfo={{barcode: deviceData?.barcode, brand: deviceData?.brand, model: deviceData?.model, ownerName: deviceData?.ownerName }}
               />
             </div>
-
-            <PhotoGallery photos={deviceData.photos} />
-            <ScanTimeline scans={deviceData.scans} />
-
-            <OwnerCommunication
-              ownerInfo={{
-                name: deviceData.ownerName,
-                email: deviceData.ownerEmail,
-                phone: deviceData.ownerPhone
-              }}
-              notificationHistory={deviceData.notificationHistory}
-            />
           </div>
         </div>
       </div>

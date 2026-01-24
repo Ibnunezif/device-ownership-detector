@@ -25,9 +25,9 @@ const StolenDeviceTable = ({ devices, onViewDetails, onUpdateStatus, onViewScans
           <tr className="border-b border-border bg-muted/50">
             <th className="text-left p-4 caption font-semibold text-foreground">Device</th>
             <th className="text-left p-4 caption font-semibold text-foreground">Owner</th>
-            <th className="text-left p-4 caption font-semibold text-foreground">Theft Date</th>
-            <th className="text-left p-4 caption font-semibold text-foreground">Last Location</th>
-            <th className="text-left p-4 caption font-semibold text-foreground">Scan Attempts</th>
+            <th className="text-left p-4 caption font-semibold text-foreground">Owner Profile</th>
+            <th className="text-left p-4 caption font-semibold text-foreground">Department</th>
+            <th className="text-left p-4 caption font-semibold text-foreground">Device Type</th>
             <th className="text-left p-4 caption font-semibold text-foreground">Status</th>
             <th className="text-left p-4 caption font-semibold text-foreground">Actions</th>
           </tr>
@@ -55,21 +55,25 @@ const StolenDeviceTable = ({ devices, onViewDetails, onUpdateStatus, onViewScans
                 </div>
               </td>
               <td className="p-4">
-                <p className="caption text-foreground">{device?.owner}</p>
+                <p className="caption text-foreground">{device.owner}</p>
               </td>
               <td className="p-4">
-                <p className="caption text-foreground whitespace-nowrap">{formatDate(device?.theftDate)}</p>
-              </td>
+                                <img
+                src={device?.ownerImage}
+                alt={device?.imageAlt || 'Owner image'}
+                className="w-12 h-12 rounded-full object-cover"
+              />
+          </td>
               <td className="p-4">
                 <div className="flex items-center gap-2">
                   <Icon name="MapPin" size={14} className="text-muted-foreground flex-shrink-0" />
-                  <p className="caption text-foreground truncate max-w-[200px]">{device?.lastLocation}</p>
+                  <p className="caption text-foreground truncate max-w-[200px]">{device?.department}</p>
                 </div>
               </td>
               <td className="p-4">
                 <div className="flex items-center gap-2">
                   <Icon name="AlertTriangle" size={14} className="text-error flex-shrink-0" />
-                  <p className="caption text-foreground font-semibold">{device?.scanAttempts}</p>
+                  <p className="caption text-foreground font-semibold">{device?.deviceType}</p>
                 </div>
               </td>
               <td className="p-4">
@@ -80,23 +84,29 @@ const StolenDeviceTable = ({ devices, onViewDetails, onUpdateStatus, onViewScans
               <td className="p-4">
                 <div className="flex items-center gap-2">
                   <Button
-                    variant="ghost"
-                    size="xs"
-                    iconName="Eye"
-                    onClick={() => onViewDetails(device?.id)}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    iconName="RefreshCw"
-                    onClick={() => onUpdateStatus(device?.id)}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    iconName="Activity"
-                    onClick={() => onViewScans(device?.id)}
-                  />
+  variant="ghost"
+  size="xs"
+  iconName="Eye"
+  title="View device details"
+  onClick={() => onViewDetails(device?.id)}
+/>
+
+<Button
+  variant="ghost"
+  size="xs"
+  iconName="RefreshCw"
+  title="Update recovery status"
+  onClick={() => onUpdateStatus(device?.id)}
+/>
+
+<Button
+  variant="ghost"
+  size="xs"
+  iconName="Activity"
+  title="View scan activity"
+  onClick={() => onViewScans(device?.id)}
+/>
+
                 </div>
               </td>
             </tr>

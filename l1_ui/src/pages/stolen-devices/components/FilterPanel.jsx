@@ -7,8 +7,9 @@ const FilterPanel = ({ filters, onFilterChange, onReset }) => {
   const statusOptions = [
     { value: 'all', label: 'All Statuses' },
     { value: 'STOLEN', label: 'Stolen' },
-    { value: 'RECOVERED', label: 'Recovered' },
-    { value: 'INVESTIGATING', label: 'Investigating' }
+    { value: 'PENDING', label: 'Recovered' },
+    { value: 'BLOCKED', label: 'Blocked' },
+    { value: 'APPROVED', label: 'Approved' }
   ];
 
   const deviceTypeOptions = [
