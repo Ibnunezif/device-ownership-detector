@@ -98,6 +98,7 @@ const scanDevice = async (req, res) => {
         color: device.color,
         serial_number: device.serial_number,
         image: device.device_photo || null,
+        status: device.status,
       },
       gate: {
         id: gate._id,
