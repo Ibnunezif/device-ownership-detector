@@ -40,6 +40,8 @@ const SecurityScan = () => {
       });
 
       setScanResult(result);
+                  console.log(scanResult)
+
       setScanHistory((prev) => [result, ...prev].slice(0, 10));
     } catch (err) {
       console.error('Scan error:', err);
@@ -51,6 +53,7 @@ const SecurityScan = () => {
           : status === 404
           ? 'Device not found.'
           : status === 400
+          
           ? err?.response?.data?.message ||
             'Validation failed. Check barcode or scan method.'
           : 'Unable to scan device. Please try again.';
@@ -110,7 +113,6 @@ const SecurityScan = () => {
                   loading={loading}
                 />
               </div>
-
               <div className="space-y-4 md:space-y-6">
                 {scanResult ? (
                   <ScanResult

@@ -6,10 +6,11 @@ const mapScanResponseToResult = (data) => {
   const { scan, user, device, gate } = data;
 
   // If backend adds status later, map it here; default ACTIVE for now
-  const status = device?.status === 'STOLEN'
+  const status = device?.status === 'stolen'
     ? 'STOLEN'
-    : device?.status === 'BLOCKED'
+    : device?.status === 'blocked'
     ? 'BLOCKED'
+
     : 'ACTIVE';
 
   return {
@@ -22,8 +23,8 @@ const mapScanResponseToResult = (data) => {
 
     ownerName: user.full_name,
     studentId: user.university_id,
-    ownerEmail: '',          // not in current response
-    ownerPhone: '',          // not in current response
+    scanMethod: scan.scan_method,          // not in current response
+    location: gate.location,          // not in current response
     ownerAvatar: user.image,
     ownerAvatarAlt: user.full_name,
     registeredAt: scan.scanned_at,
