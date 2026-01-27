@@ -44,6 +44,15 @@ export const loginUser = async (formData) => {
 /**
  * Logout user
  */
-export const logoutUser = () => {
-  localStorage.clear();
+// src/services/authService.js
+export const logoutUser = (navigate) => {
+  // Clear authentication data
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('user');
+
+  // Redirect to login page if navigate function is provided
+  if (navigate && typeof navigate === 'function') {
+    navigate('/login');
+  }
 };
+

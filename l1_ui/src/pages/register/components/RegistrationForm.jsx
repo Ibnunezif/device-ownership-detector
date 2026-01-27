@@ -17,7 +17,6 @@ const RegistrationForm = () => {
     university_id: '',
     department: '',
     batch: '',
-    role: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -87,7 +86,6 @@ const RegistrationForm = () => {
     if (!formData.university_id.trim()) newErrors.university_id = 'University ID is required';
     if (!formData.department.trim()) newErrors.department = 'Department is required';
     if (!formData.batch.trim()) newErrors.batch = 'Batch is required';
-    if (!formData.role) newErrors.role = 'Please select your role';
 
     if (!formData.email.trim()) newErrors.email = 'Email is required';
     else if (!validateEmail(formData.email)) newErrors.email = 'Enter a valid university email';
@@ -124,7 +122,6 @@ const RegistrationForm = () => {
         university_id: formData.university_id.trim(),
         department: formData.department.trim(),
         batch: formData.batch.trim(),
-        role: formData.role,
         email: formData.email.trim(),
         password: formData.password
       };
@@ -161,8 +158,6 @@ const RegistrationForm = () => {
         <Select label="Department" options={departmentOptions.map(d => ({ value: d, label: d }))} value={formData.department} onChange={value => handleInputChange('department', value)} error={errors.department} placeholder="Select department" required disabled={loading} />
 
         <Input label="Batch" type="text" placeholder="2025" value={formData.batch} onChange={e => handleInputChange('batch', e.target.value)} error={errors.batch} required disabled={loading} />
-
-        <Select label="Role" options={roleOptions} value={formData.role} onChange={value => handleInputChange('role', value)} error={errors.role} placeholder="Select role" required disabled={loading} />
 
         <Input label="University Email" type="email" placeholder="your.email@astu.edu.et" value={formData.email} onChange={e => handleInputChange('email', e.target.value)} error={errors.email} required disabled={loading} />
 
